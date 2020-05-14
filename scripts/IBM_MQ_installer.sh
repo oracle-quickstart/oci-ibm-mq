@@ -6,8 +6,9 @@
 ###################################
 cd ~
 rm -rf MQServer
-if ! -f IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
-wget https://objectstorage.us-ashburn-1.oraclecloud.com/p/ePOOE2C5JNcypPRKFemaP7h0uub4NH5FzJIuSwuKmwY/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
+if ! -f IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz; then
+  wget https://objectstorage.us-ashburn-1.oraclecloud.com/p/ePOOE2C5JNcypPRKFemaP7h0uub4NH5FzJIuSwuKmwY/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
+fi
 tar -xvzf IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
 
 
