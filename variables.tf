@@ -42,7 +42,7 @@ variable "mp_listing_resource_version" {
 
 variable "vm_display_name" {
   description = "Instance Name"
-  default     = "simple"
+  default     = "OracleLinux_IBMMQ"
 }
 
 variable "vm_compute_shape" {
