@@ -8,7 +8,7 @@ data "oci_core_images" "ol7" {
   # filter restricts to pegged version regardless of region
   filter {
     name = "display_name"
-    values = ["Oracle-Linux-7.7-2020.03.23-0"]
+    values = ["Oracle-Linux-7.5-2018.08.14-0"]
     regex = false
   }
 

@@ -1,27 +1,41 @@
 #!/usr/bin/env bash
+set -x
+
+###################################
+## Update to lateset version of prerequisite packages
+###################################
+# Prerequisites
+sudo yum -y -q install  OpenIPMI-modalias.x86_64 OpenIPMI-libs.x86_64 \
+                        libyaml.x86_64 PyYAML.x86_64 libesmtp.x86_64 \
+                        net-snmp-libs.x86_64 net-snmp-agent-libs.x86_64 \
+                        openhpi-libs.x86_64 libtool-ltdl.x86_64 perl-TimeDate.x86_64
+
+rpm --import https://packages.linbit.com/package-signing-pubkey.asc
 
 ###################################
 ## Get the installation binary and extraxct
 ###################################
-cd ~
-rm -rf MQServer
-if ! [ -f IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz ] ; then 
-  wget https://objectstorage.us-ashburn-1.oraclecloud.com/p/ePOOE2C5JNcypPRKFemaP7h0uub4NH5FzJIuSwuKmwY/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
-fi
-tar -xvzf IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
+wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/bb414wRolCqgCwbGva7PfjBSt2_qEESt_E5SgoQH8fo/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
+tar -xvzf IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
 
 
 ###################################
 ## Accept the software license 
 ###################################
 cd MQServer
-sudo ./mqlicense.sh -accept
+./mqlicense.sh -accept
 
 
 ###################################
-## Install all IBM MQ components to the default location 
+## Install IBM MQ, RDQM, Pacemaker, and DRBD
 ###################################
-sudo rpm -ivh MQSeries*.rpm
+Advanced/RDQM/installRDQMsupport
+
+
+###################################
+## Configure script for the RDQM firewall
+###################################
+/opt/mqm/samp/rdqm/firewalld/configure.sh
 
 
 ###################################
@@ -31,7 +45,7 @@ sudo rpm -ivh MQSeries*.rpm
 if dspmqver ; then 
   echo "Check...................1/1" 
 else 
-  echo "Installation Failed"  
+  echo "ERROR! Installation Failed."  
   exit
 fi
 
@@ -43,14 +57,41 @@ fi
 ## Set password for mqm user
 echo Ibmmq123! | sudo passwd mqm --stdin
 
-## Add opc to the mqm group
+## Add user opc to the mqm group
 usermod -g mqm opc
+
+## Allow user mqm to run commands without password.
+## Required for RDQM.
+sudo usermod -G wheel mqm
+sudo -u mqm "/opt/mqm/bin/crtmqm"    
+sudo -u mqm "/opt/mqm/bin/dltmqm"
+sudo -u mqm "/opt/mqm/bin/rdqmadm"
+sudo -u mqm "/opt/mqm/bin/rdqmstatus"
+
+
+## Clear the /var/mqm/rdqm.ini
+mv /var/mqm/rdqm.ini /var/mqm/rdqm.ini.bak
+ 
+## Define the Pacemaker cluster by editing the /var/mqm/rdqm.ini
+#for n in `seq 1 $node_count`; do
+  echo "Node:" >> /var/mqm/rdqm.ini
+  echo "HA_Primary=$(host RDQM-node-0 | awk '{ print $4 }')" >> /var/mqm/rdqm.ini
+#done
+
+## Initialize the rdqm Pacemaker cluster.
+rdqmadm -c
+
+echo "" > ~opc/Hello_World.txt
+
+
+## Enter the following command on each of the nodes that does NOT have secondary instances of the RDQM:
+#crtmqm -sx [-fs FilesystemSize] qmname
 
 
 ###################################
 ## Implement passwordless ssh:
 ## 
-##   https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q131120_.htm
+##   https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q131120_.##
 ##
 ## This is goinf to require a post installation/instance creation
 ## script run as the mqm user on all 3 nodes.

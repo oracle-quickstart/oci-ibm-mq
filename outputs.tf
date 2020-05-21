@@ -3,16 +3,16 @@
 ###
 
 output "instance_public_ip" {
-  value = oci_core_instance.simple-vm.public_ip
+  value = join(",", oci_core_instance.node.*.public_ip)
 }
 
 output "instance_private_ip" {
-  value = oci_core_instance.simple-vm.private_ip
+  value = join(",", oci_core_instance.node.*.private_ip)
 }
 
-output "instance_https_url" {
-  value = "https://${oci_core_instance.simple-vm.public_ip}"
-}
+# output "instance_https_url" {
+#   value = "https://${oci_core_instance.node.*.public_ip}"
+# }
 
 ###
 # network.tf outputs
