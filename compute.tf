@@ -28,6 +28,7 @@ resource "oci_core_instance" "node" {
     hostname_label   = "RDQM-node-${count.index}"
     display_name     = "RDQM-node-${count.index}"
     assign_public_ip = true
+    nsg_ids          = [oci_core_network_security_group.nsg.id]
   }
 
   metadata = {
@@ -35,5 +36,5 @@ resource "oci_core_instance" "node" {
     user_data = base64encode(file("./scripts/IBM_MQ_installer.sh"))
   }
 
-  count = 1
+  count = var.node_count
 }

@@ -138,3 +138,19 @@ variable "nsg_display_name" {
   description = "Network Security Groups - Name"
   default     = "simple-security-group"
 }
+
+variable "disk_count" {
+  description = "Each node requires a volume group named drbdpool." 
+  default     = 1
+}
+
+variable "node_count" {
+  description = "An RDQM configuration consists of three servers."
+  default     = 3
+}
+
+variable "disk_size" {
+  description = "Configuration doc uses 16Gig. Lets use 50Gig to be safe."
+  default     = 50
+}
+

@@ -60,6 +60,14 @@ resource "oci_core_network_security_group_security_rule" "rule_egress_all" {
   destination = "0.0.0.0/0"
 }
 
+resource "oci_core_network_security_group_security_rule" "rule_ingress_tcp_vcn" {
+  network_security_group_id = oci_core_network_security_group.nsg.id
+  protocol                  = "all"
+  direction                 = "INGRESS"
+  source                    = var.vcn_cidr_block
+  stateless                 = false
+}
+
 resource "oci_core_network_security_group_security_rule" "rule_ingress_tcp443" {
   network_security_group_id = oci_core_network_security_group.nsg.id
   protocol                  = "6"

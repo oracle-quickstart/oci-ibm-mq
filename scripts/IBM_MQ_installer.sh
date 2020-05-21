@@ -5,7 +5,10 @@ set -x
 ## Update to lateset version of prerequisite packages
 ###################################
 # Prerequisites
-sudo yum -y -q install  OpenIPMI-modalias.x86_64 OpenIPMI-libs.x86_64 \
+systemctl stop firewalld
+systemctl disable firewalld
+
+yum -y -q install  OpenIPMI-modalias.x86_64 OpenIPMI-libs.x86_64 \
                         libyaml.x86_64 PyYAML.x86_64 libesmtp.x86_64 \
                         net-snmp-libs.x86_64 net-snmp-agent-libs.x86_64 \
                         openhpi-libs.x86_64 libtool-ltdl.x86_64 perl-TimeDate.x86_64
@@ -33,9 +36,14 @@ Advanced/RDQM/installRDQMsupport
 
 
 ###################################
-## Configure script for the RDQM firewall
+## Perform various setup and group assignments
+## for the mqm user and the opc user.
 ###################################
-/opt/mqm/samp/rdqm/firewalld/configure.sh
+## Set password for mqm user
+echo Ibmmq123! | sudo passwd mqm --stdin
+
+## Add user opc to the mqm group
+usermod -g mqm opc
 
 
 ###################################
@@ -51,40 +59,74 @@ fi
 
 
 ###################################
-## Perform various setup and group assignments
-## for the mqm user and the opc user.
+## Each node requires a volume group named drbdpool. The 
+## storage for each replicated data queue manager is 
+## allocated as a separate logical volume per queue manager 
+## from this volume group. For the best performance, this 
+## volume group should be made up of one or more physical 
+## volumes that correspond to internal disk drives (preferably SSDs). 
+## You should create drbdpool after you have installed the 
+## RDQM HA solution, but before you actually create any RDQMs. 
+## Check your volume group configuration by using the vgs command. 
+## The output should be similar to the following:
+##
+##  VG       #PV #LV #SN Attr   VSize   VFree 
+##  drbdpool   1   9   0 wz--n- <16.00g <7.00g
+##
+##  https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q130980_.htm
+##
 ###################################
-## Set password for mqm user
-echo Ibmmq123! | sudo passwd mqm --stdin
+## Create a Volume group called drbdpool
+echo "Attempting iscsi discovery/login of 169.254.2.2 ..."
+success=1
+while [[ $success -eq 1 ]]; do
+  iqn=$(iscsiadm -m discovery -t sendtargets -p 169.254.2.2:3260 | awk '{print $2}')
+  if  [[ $iqn != iqn.* ]] ;
+  then
+    echo "Warning: unexpected iqn value: $iqn. Waiting 10sec."
+    sleep 10s
+    continue
+  else
+    echo "Success for iqn: $iqn"
+    success=0
+  fi
+done
+iscsiadm -m node -o update -T $iqn -n node.startup -v automatic
+iscsiadm -m node -T $iqn -p 169.254.2.2:3260 -l
+sleep 5
+vg_path=`ls /dev/disk/by-path/ip-169.254*`
+pvcreate ${vg_path}
+vgcreate drbdpool ${vg_path} 
 
-## Add user opc to the mqm group
-usermod -g mqm opc
 
-## Allow user mqm to run commands without password.
-## Required for RDQM.
+## You must configure sudo so that the mqm user can run the following commands with root authority:
 sudo usermod -G wheel mqm
-sudo -u mqm "/opt/mqm/bin/crtmqm"    
-sudo -u mqm "/opt/mqm/bin/dltmqm"
-sudo -u mqm "/opt/mqm/bin/rdqmadm"
-sudo -u mqm "/opt/mqm/bin/rdqmstatus"
+sudo usermod -G haclient mqm
+sudo usermod -G haclient opc
 
-
-## Clear the /var/mqm/rdqm.ini
+## Clear the /var/mqm/rdqm.ini and define the Pacemaker cluster
+## https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q130290_.htm
 mv /var/mqm/rdqm.ini /var/mqm/rdqm.ini.bak
- 
-## Define the Pacemaker cluster by editing the /var/mqm/rdqm.ini
-#for n in `seq 1 $node_count`; do
+for n in 0 1 2; do
   echo "Node:" >> /var/mqm/rdqm.ini
-  echo "HA_Primary=$(host RDQM-node-0 | awk '{ print $4 }')" >> /var/mqm/rdqm.ini
-#done
-
-## Initialize the rdqm Pacemaker cluster.
+  echo "HA_Replication=$(host RDQM-node-${n} | awk '{ print $4 }')" >> /var/mqm/rdqm.ini
+done
 rdqmadm -c
 
-echo "" > ~opc/Hello_World.txt
+###################################
+## If there is a firewall between the nodes in the HA group, 
+## then the firewall must allow traffic between the nodes on 
+## a range of ports. A sample script is provided, /opt/mqm/samp/rdqm/firewalld/configure.sh, 
+## that opens up the necessary ports if you are running the 
+## standard firewall in RHEL. You must run the script as root. 
+## If you are using some other firewall, examine the service definitions 
+## /usr/lib/firewalld/services/rdqm* to see which ports need to be opened.
+###################################
+#/opt/mqm/samp/rdqm/firewalld/configure.sh
 
 
 ## Enter the following command on each of the nodes that does NOT have secondary instances of the RDQM:
+## https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q130310_.htm
 #crtmqm -sx [-fs FilesystemSize] qmname
 
 
