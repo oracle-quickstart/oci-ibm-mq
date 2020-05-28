@@ -8,7 +8,7 @@ First off you'll need to do some pre deploy setup.  That's all detailed [here](h
 Now, you'll want a local copy of this repo.  You can make that with the commands:
 
     $> git clone https://github.com/oracle-quickstart/oci-ibm-mq.git
-    $> cd oci-ibm-mq/simple
+    $> cd oci-ibm-mq
     $> ls
 
 That should give you this:
