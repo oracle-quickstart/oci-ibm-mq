@@ -8,18 +8,26 @@ set -x
 systemctl stop firewalld
 systemctl disable firewalld
 
+cp /etc/security/limits.conf /etc/security/limits.conf.bak
+echo "*                hard   nofile         10240" >> /etc/security/limits.conf
+echo "*                soft   nofile         10240" >> /etc/security/limits.conf
+echo "root             hard   nofile         10240" >> /etc/security/limits.conf
+echo "root             soft   nofile         10240" >> /etc/security/limits.conf
+
 yum -y -q install  OpenIPMI-modalias.x86_64 OpenIPMI-libs.x86_64 \
                         libyaml.x86_64 PyYAML.x86_64 libesmtp.x86_64 \
                         net-snmp-libs.x86_64 net-snmp-agent-libs.x86_64 \
                         openhpi-libs.x86_64 libtool-ltdl.x86_64 perl-TimeDate.x86_64
-
 rpm --import https://packages.linbit.com/package-signing-pubkey.asc
+
 
 ###################################
 ## Get the installation binary and extraxct
 ###################################
-wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/bb414wRolCqgCwbGva7PfjBSt2_qEESt_E5SgoQH8fo/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
-tar -xvzf IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
+#wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/bb414wRolCqgCwbGva7PfjBSt2_qEESt_E5SgoQH8fo/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
+#tar -xvzf IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
+wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/3eNrJgVBK43iVo2htkiGmqECB11kc-OCSCRo3YV2nDU/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64-OL.tar.gz
+tar -xzf mqadv_dev915_linux_x86-64-OL.tar.gz
 
 
 ###################################
