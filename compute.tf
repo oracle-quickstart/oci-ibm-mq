@@ -5,7 +5,13 @@ locals {
   # platform_image = data.oci_core_images.ol7.images[0].id
  
   # OL7.5 ashburn specific
-  platform_image = "ocid1.image.oc1.iad.aaaaaaaa2tq67tvbeavcmioghquci6p3pvqwbneq3vfy7fe7m7geiga4cnxa" 
+  # platform_image = "ocid1.image.oc1.iad.aaaaaaaa2tq67tvbeavcmioghquci6p3pvqwbneq3vfy7fe7m7geiga4cnxa"
+
+  # OL7.5 -> RHEL kernel
+  platform_image = "ocid1.image.oc1.iad.aaaaaaaap4nghzjna6anki6rw3tofnhbnmbaumn4h4jh6w23fyj7hogb6sfq"
+
+  # RHEL7.8 - kernel3.10.0-1062
+  # platform_image = "ocid1.image.oc1.iad.aaaaaaaavwnbi6gaqcniko63fisolvoex3zuvbudpt6dr2ckjpbywzaxh7ya"
 
   # Logic to choose platform or mkpl image based on var.enabled
   image          = var.enabled ? var.mp_listing_resource_id : local.platform_image

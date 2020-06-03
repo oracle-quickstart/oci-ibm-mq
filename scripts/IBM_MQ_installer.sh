@@ -26,8 +26,10 @@ rpm --import https://packages.linbit.com/package-signing-pubkey.asc
 ###################################
 #wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/bb414wRolCqgCwbGva7PfjBSt2_qEESt_E5SgoQH8fo/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
 #tar -xvzf IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
-wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/3eNrJgVBK43iVo2htkiGmqECB11kc-OCSCRo3YV2nDU/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64-OL.tar.gz
-tar -xzf mqadv_dev915_linux_x86-64-OL.tar.gz
+wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/Tplij2V9kvXvruxIG1BfyT1j1MVXVN2wyrhKqP5wp3o/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64.tar.gz 
+tar -xzf mqadv_dev915_linux_x86-64.tar.gz
+#wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/2_tsp_hfzLzws3DVaQNWyoq8nJR7f3U0ghO86JSGEo8/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
+#tar -xzf IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
 
 
 ###################################
