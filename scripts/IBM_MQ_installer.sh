@@ -24,12 +24,9 @@ rpm --import https://packages.linbit.com/package-signing-pubkey.asc
 ###################################
 ## Get the installation binary and extraxct
 ###################################
-#wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/bb414wRolCqgCwbGva7PfjBSt2_qEESt_E5SgoQH8fo/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
-#tar -xvzf IBM_MQ_9.1_LINUX_X86-64_TRIAL_OL.tar.gz
-wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/Tplij2V9kvXvruxIG1BfyT1j1MVXVN2wyrhKqP5wp3o/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64.tar.gz 
-tar -xzf mqadv_dev915_linux_x86-64.tar.gz
-#wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/2_tsp_hfzLzws3DVaQNWyoq8nJR7f3U0ghO86JSGEo8/n/partners/b/bucket-20200513-1843/o/IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
-#tar -xzf IBM_MQ_9.1_LINUX_X86-64_TRIAL.tar.gz
+wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/N4IfEfvPm5yfj8SjAgJNL8DKgnSWb-TM-2YxfcoTFZ0/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64-OL.tar.gz
+touch mqadv_dev915_linux_x86-64-OL.tar.gz
+tar -xzf mqadv_dev915_linux_x86-64-OL.tar.gz
 
 
 ###################################
@@ -51,9 +48,6 @@ Advanced/RDQM/installRDQMsupport
 ###################################
 ## Set password for mqm user
 echo Ibmmq123! | sudo passwd mqm --stdin
-
-## Add user opc to the mqm group
-usermod -g mqm opc
 
 
 ###################################
@@ -104,24 +98,28 @@ done
 iscsiadm -m node -o update -T $iqn -n node.startup -v automatic
 iscsiadm -m node -T $iqn -p 169.254.2.2:3260 -l
 sleep 5
-vg_path=`ls /dev/disk/by-path/ip-169.254*`
+
+## Assuming 1 block volume at the 169.254.2.2 ip address
+vg_path=`ls /dev/disk/by-path/ip-169.254.2.2*`
 pvcreate ${vg_path}
 vgcreate drbdpool ${vg_path} 
 
 
 ## You must configure sudo so that the mqm user can run the following commands with root authority:
-sudo usermod -G wheel mqm
-sudo usermod -G haclient mqm
-sudo usermod -G haclient opc
+usermod -G wheel mqm
+usermod -G haclient mqm
+usermod -G haclient root
 
 ## Clear the /var/mqm/rdqm.ini and define the Pacemaker cluster
-## https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q130290_.htm
-mv /var/mqm/rdqm.ini /var/mqm/rdqm.ini.bak
+##
+##   https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q130290_.htm
+if [ -f /var/mqm/rdqm.ini ] ; then mv /var/mqm/rdqm.ini /var/mqm/rdqm.ini.bak ; fi
 for n in 0 1 2; do
   echo "Node:" >> /var/mqm/rdqm.ini
   echo "HA_Replication=$(host RDQM-node-${n} | awk '{ print $4 }')" >> /var/mqm/rdqm.ini
 done
 rdqmadm -c
+
 
 ###################################
 ## If there is a firewall between the nodes in the HA group, 
@@ -167,4 +165,3 @@ rdqmadm -c
 ###################################
 ## Verify client installation
 ###################################
-
