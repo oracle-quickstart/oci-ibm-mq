@@ -8,10 +8,10 @@ locals {
   # platform_image = "ocid1.image.oc1.iad.aaaaaaaa2tq67tvbeavcmioghquci6p3pvqwbneq3vfy7fe7m7geiga4cnxa"
 
   # RHEL 7.7
-  # platform_image = "ocid1.image.oc1.iad.aaaaaaaampfbdyufdqwxj4l2tqlzmpdtpfhvjmobjx2phtdmys63sixlxvma"
+  platform_image = "ocid1.image.oc1.iad.aaaaaaaampfbdyufdqwxj4l2tqlzmpdtpfhvjmobjx2phtdmys63sixlxvma"
 
   # RHEL 7.8
-  platform_image = "ocid1.image.oc1.iad.aaaaaaaaudagrloi24f6ivdjimgmfwz7z7jx55yyt3dov7sprzdjf7x4zdia"
+  # platform_image = "ocid1.image.oc1.iad.aaaaaaaaudagrloi24f6ivdjimgmfwz7z7jx55yyt3dov7sprzdjf7x4zdia"
 
   # Logic to choose platform or mkpl image based on var.enabled
   image          = var.enabled ? var.mp_listing_resource_id : local.platform_image
