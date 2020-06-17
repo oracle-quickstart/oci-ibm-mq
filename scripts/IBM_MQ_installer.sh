@@ -109,6 +109,7 @@ vgcreate drbdpool ${vg_path}
 usermod -G wheel mqm
 usermod -G haclient mqm
 usermod -G haclient root
+usermod -a -G mqm root
 
 ## Clear the /var/mqm/rdqm.ini and define the Pacemaker cluster
 ##
