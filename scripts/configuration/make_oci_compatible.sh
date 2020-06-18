@@ -1,149 +1,112 @@
 #!/bin/bash
 
-## Preconfigure
+## Exit if any errors encountered
+set -e
+
+##############################################################
+## Before this script is run on a vanilla rhel image 
+## the following steps must be manually performed.
+##
+## 1. Disable root password:
+## 
+##   $> ssh <user_name>@<ip_address> -p <user_name><password>
+##   $> sudo -i <enter_root_password>
+##   $> passwd -d root
+##
+## 2. Setup passwordless ssh logins:
+##
+##   /etc/ssh/sshd_config
+##   "PasswordAuthentication no"
+## 
+## 3. You MUST register with your own RedHat credentials (free).
+##  
+##   $> subscription-manager unregister
+##   $> subscription-manager clean
+##   $> subscription-manager register --username <username> --password <password> --auto-attach
+## 
+##############################################################
 
 
-#Setup sshless login https://linuxize.com/post/how-to-setup-passwordless-ssh-login/
-
-ssh-copy-id -i ~/.ssh/oci opc@150.136.68.21
-ssh opc@150.136.68.21
-sudo -i
-  iFhCVrn!1020
-$> passwd -d root
-
-## Modify /etc/ssh/sshd_config
-PasswordAuthentication no
+## The bare minimum to get rhel to work in oci.
+yum -y install cloud-init bind-utils wget rsync
 
 
-#$> cd ~
-#$> curl -O https://objectstorage.us-phoenix-1.oraclecloud.com/p/qnGdEeuts2qRSn4EwOfEb9cys9fYRmyGn6EDsmsg_2I/n/imagegen/b/agents/o/oracle-cloud-agent-0.0.18-18.el7.x86_64.rpm -v
-#$> sudo yum install -y oracle-cloud-agent-0.0.18-18.el7.x86_64.rpm
-#$> Rm oracle-cloud-agent-0.0.18-18.el7.x86_64.rpm
+## The following are optional. They are not needed for a minimum
+## working version of RHEL in OCI, but I find having them installed to be useful.
+yum -y -q install  OpenIPMI-modalias.x86_64 OpenIPMI-libs.x86_64 \
+                    libyaml.x86_64 PyYAML.x86_64 libesmtp.x86_64 \
+                    net-snmp-libs.x86_64 net-snmp-agent-libs.x86_64 \
+                    openhpi-libs.x86_64 libtool-ltdl.x86_64 perl-TimeDate.x86_64
 
 
-subscription-manager repos --disable=rhel-7-server-rt-beta-rpms
+## Install Oracle Cloud agent. Will get reprimanded if not installed (eventaully).
+curl -O https://objectstorage.us-phoenix-1.oraclecloud.com/p/qnGdEeuts2qRSn4EwOfEb9cys9fYRmyGn6EDsmsg_2I/n/imagegen/b/agents/o/oracle-cloud-agent-0.0.18-18.el7.x86_64.rpm -v
+yum install -y oracle-cloud-agent-0.0.18-18.el7.x86_64.rpm
+rm -f oracle-cloud-agent-0.0.18-18.el7.x86_64.rpm
+
+
+## Network Manager must be disabled for unknown reasons.
+## It will probably be re-enabled in Oracle Linux 8 (so here as well).
 systemctl disable NetworkManager
 
 
+## We need the 'jq' package for some exit-hook dhcp scripts.
+curl -O https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum install -y epel-release-latest-7.noarch.rpm
+yum install -y jq
+epel_release=`rpm -qa | grep epel-release`
+yum remove -y ${epel_release}
+rm -f epel-release-latest-7.noarch.rpm
 
-yum -y install cloud-init wget rsync bind-utils vim
-## https://www.cyberciti.biz/faq/installing-rhel-epel-repo-on-centos-redhat-7-x/
-cd /tmp
-wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-yum install epel-release-latest-7.noarch.rpm
+## Get the 7.x version number to determine which packages to download later.
+if cat /etc/redhat-release | grep "7.8"; then
+  minor_version="8"
+elif cat /etc/redhat-release | grep "7.7"; then
+  minor_version="7"
+else
+  cat /etc/redhat-release
+  echo "Must be Red Hat release version 7.7 or 7.8"
+  exit 1
+fi
 
+## Download and install additional cloud-init scripts taken from
+## the equivalent version on Oracle Linux platforms.
+cd /etc/cloud/cloud.cfg.d
+wget https://github.com/oracle-quickstart/oci-ibm-mq/raw/master/scripts/configuration/cloud.cfg.d_7.${minor_version}.tar.gz 
+tar -xzvf cloud.cfg.d_7.${minor_version}.tar.gz 
+rm -f cloud.cfg.d_7.${minor_version}.tar.gz 
 
-## 7.7
-cd /etc/cloud/cloud.d
-wget https://github.com/oracle-quickstart/oci-ibm-mq/blob/master/scripts/configuration/cloud.cfg.d_7.7.tar.gz?raw=true
-tar -xzvf cloud.cfg.d_7.7.tar.gz
-rm cloud.cfg.d_7.7.tar.gz 
-
-
+## Download and install additional dhcp scripts taken from
+## the equivalent version on Oracle Linux platforms.
 cd /etc/dhcp/
-wget https://github.com/oracle-quickstart/oci-ibm-mq/raw/master/scripts/configuration/dhcp_7.7.tar.gz
-tar -xzvf dhcp_7.7.tar.gz
-rm dhcp_7.7.tar.gz 
+wget https://github.com/oracle-quickstart/oci-ibm-mq/raw/master/scripts/configuration/dhcp_7.${minor_version}.tar.gz
+tar -xzvf dhcp_7.${minor_version}.tar.gz
+rm -f dhcp_7.${minor_version}.tar.gz
+chmod 755 dhclient-exit-hooks
+chmod 755 exit-hooks.d/dhclient-exit-hook-set-hostname.sh 
 
-
+## Get the oci-hostname.conf from Oracle Linux. Not really needed
+## as default behavior is the same. But might be required in the future.
 cd /etc/
 wget https://raw.githubusercontent.com/oracle-quickstart/oci-ibm-mq/master/scripts/configuration/oci-hostname.conf
 
 
+## Remove any baked in subscription information.
+subscription-manager remove --all
+subscription-manager unregister 
+subscription-manager clean
 
+## Download the oci cleanup script to clear the system of all history, ssh keys, etc.
+cd ~i
+wget https://raw.githubusercontent.com/oracle/oci-utils/master/libexec/oci-image-cleanup
+chmod 700 oci-image-cleanup
+./oci-image-cleanup -f
 
-
-
-copy over ssh.d/cloud-init file
-copy over /etc/oci-hostname.conf
-
-
-
-# 7.8 Only
-# vim /etc/sysconfig/network-scripts/ifcfg-ens3
-NM_CONTROLLED=no
-
-
-
-
-
-
-
-
-# 7.8 Only
-# /etc/cloud/cloud.cfg
-network:
-  config: disabled
-
-7.7 Only
-
-
-
-wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
-chmod +x ./jq
-mv jq /usr/bin
-
-
-wget https://raw.githubusercontent.com/oracle-quickstart/oci-ibm-mq/master/scripts/configuration/oci-hostname.conf
-mv oci-hostname.conf /etc/
-
-wget https://raw.githubusercontent.com/oracle-quickstart/oci-ibm-mq/master/scripts/configuration/dhclient-exit-hooks
-mv dhclient-exit-hooks /etc/dhcp/
-chmod 755 /etc/dhcp/dhclient-exit-hooks
-
-wget https://raw.githubusercontent.com/oracle-quickstart/oci-ibm-mq/master/scripts/configuration/exit-hooks.d/dhclient-exit-hook-set-hostname.sh
- mkdir /etc/dhcp/exit-hooks.d
-mv dhclient-exit-hook-set-hostname.sh /etc/dhcp/exit-hooks.d/
-chmod 755 /etc/dhcp/exit-hooks.d/dhclient-exit-hook-set-hostname.sh 
-
-
-
-
-
-
-
-Issues with 7.7
-Jun 11 12:27:28 rhel7-8---kernel3-10-0-1062---basicconf dhclient[1174]: /var/lib/dhclient/dhclient-8d2637bf-6205-4946-8902-9da14fd271ca-ens3.lease line 11: expecting numeric value.
-Jun 11 12:27:28 rhel7-8---kernel3-10-0-1062---basicconf dhclient[1174]:   option classless-static-routes 0,
-
-lease {
-  interface "ens3";
-  fixed-address 10.0.0.12;
-  option subnet-mask 255.255.255.0;
-  option dhcp-lease-time 86400;
-  option routers 10.0.0.1;
-  option dhcp-message-type 5;
-  option domain-name-servers 169.254.169.254;
-  option dhcp-server-identifier 169.254.169.254;
-  option interface-mtu 9000;
-  option domain-name "genericvcn2.oraclevcn.com";
-  renew 5 2020/06/12 02:24:05;
-  rebind 5 2020/06/12 13:27:16;
-  expire 5 2020/06/12 16:27:16;
-
-
-
-
-lease {
-  interface "ens3";
-  fixed-address 10.0.0.13;
-  option subnet-mask 255.255.255.0;
-  option routers 10.0.0.1;
-  option dhcp-lease-time 86400;
-  option dhcp-message-type 5;
-  option dhcp-server-identifier 169.254.169.254;
-  option domain-name-servers 169.254.169.254;
-  option interface-mtu 9000;
-  option classless-static-routes 0,10,0,0,1,16,169,254,0,0,0,0;
-  option domain-name "genericvcn2.oraclevcn.com";
-  renew 5 2020/06/12 01:42:48;
-  rebind 5 2020/06/12 13:31:43;
-  expire 5 2020/06/12 16:31:43;
-}
-
-
-
-
-
-
-
+##################################################
+## IMPORTANT:
+##
+## After the oci-image-cleanup script run, you want
+## to burn the new custom images. You should not 
+## issue ANY commands after the oci-image-cleanup
+## script finishes running.
+##################################################
