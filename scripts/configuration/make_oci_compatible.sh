@@ -92,14 +92,13 @@ wget https://raw.githubusercontent.com/oracle-quickstart/oci-ibm-mq/master/scrip
 
 
 ## Remove any baked in subscription information.
-subscription-manager remove --all
-subscription-manager unregister 
-subscription-manager clean
-
 ## Download the oci cleanup script to clear the system of all history, ssh keys, etc.
 cd ~
 wget https://raw.githubusercontent.com/oracle/oci-utils/master/libexec/oci-image-cleanup
 chmod 700 oci-image-cleanup
+#subscription-manager remove --all
+#subscription-manager unregister 
+#subscription-manager clean
 ./oci-image-cleanup -f
 
 ##################################################
