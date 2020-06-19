@@ -97,7 +97,7 @@ subscription-manager unregister
 subscription-manager clean
 
 ## Download the oci cleanup script to clear the system of all history, ssh keys, etc.
-cd ~i
+cd ~
 wget https://raw.githubusercontent.com/oracle/oci-utils/master/libexec/oci-image-cleanup
 chmod 700 oci-image-cleanup
 ./oci-image-cleanup -f
