@@ -8,9 +8,11 @@ set -e
 ## the following steps must be manually performed.
 ##
 ## 1. Disable root password:
-## 
-##   $> ssh <user_name>@<ip_address> -p <user_name><password>
-##   $> sudo -i <enter_root_password>
+##        
+##   $> ssh opc@<ip_address> 
+##        <enter_root_password>
+##   $> sudo -i 
+##        <enter_root_password>
 ##   $> passwd -d root
 ##
 ## 2. Setup passwordless ssh logins:
@@ -20,9 +22,14 @@ set -e
 ## 
 ## 3. You MUST register with your own RedHat credentials (free).
 ##  
+##   $> subscription-manager remove --all
 ##   $> subscription-manager unregister
 ##   $> subscription-manager clean
 ##   $> subscription-manager register --username <username> --password <password> --auto-attach
+##
+## 4. If you get any "403 Error" you may need to issue the following command:
+##
+##   $> subscription-manager repos --disable=rhel-7-server-rt-beta-rpms
 ## 
 ##############################################################
 
@@ -93,12 +100,12 @@ wget https://raw.githubusercontent.com/oracle-quickstart/oci-ibm-mq/master/scrip
 
 ## Remove any baked in subscription information.
 ## Download the oci cleanup script to clear the system of all history, ssh keys, etc.
-cd ~
+cd /tmp
 wget https://raw.githubusercontent.com/oracle/oci-utils/master/libexec/oci-image-cleanup
 chmod 700 oci-image-cleanup
-#subscription-manager remove --all
-#subscription-manager unregister 
-#subscription-manager clean
+subscription-manager remove --all
+subscription-manager unregister 
+subscription-manager clean
 ./oci-image-cleanup -f
 
 ##################################################
