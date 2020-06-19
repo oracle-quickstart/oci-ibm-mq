@@ -14,10 +14,11 @@ echo "*                soft   nofile         10240" >> /etc/security/limits.conf
 echo "root             hard   nofile         10240" >> /etc/security/limits.conf
 echo "root             soft   nofile         10240" >> /etc/security/limits.conf
 
-yum -y -q install  OpenIPMI-modalias.x86_64 OpenIPMI-libs.x86_64 \
-                        libyaml.x86_64 PyYAML.x86_64 libesmtp.x86_64 \
-                        net-snmp-libs.x86_64 net-snmp-agent-libs.x86_64 \
-                        openhpi-libs.x86_64 libtool-ltdl.x86_64 perl-TimeDate.x86_64
+
+###################################
+## The DRBD and Pacemaker packages are signed with the LINBIT GPG key. 
+## Use the following command to import the public LINBIT GPG key:
+###################################
 rpm --import https://packages.linbit.com/package-signing-pubkey.asc
 
 
