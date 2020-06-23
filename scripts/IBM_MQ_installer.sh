@@ -14,19 +14,27 @@ echo "*                soft   nofile         10240" >> /etc/security/limits.conf
 echo "root             hard   nofile         10240" >> /etc/security/limits.conf
 echo "root             soft   nofile         10240" >> /etc/security/limits.conf
 
-yum -y -q install  OpenIPMI-modalias.x86_64 OpenIPMI-libs.x86_64 \
-                        libyaml.x86_64 PyYAML.x86_64 libesmtp.x86_64 \
-                        net-snmp-libs.x86_64 net-snmp-agent-libs.x86_64 \
-                        openhpi-libs.x86_64 libtool-ltdl.x86_64 perl-TimeDate.x86_64
+###################################
+## The DRBD and Pacemaker packages are signed with the LINBIT GPG key. 
+## Use the following command to import the public LINBIT GPG key:
+###################################
 rpm --import https://packages.linbit.com/package-signing-pubkey.asc
 
 
 ###################################
-## Get the installation binary and extraxct
+## Get the installation binary and extract
 ###################################
-wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/N4IfEfvPm5yfj8SjAgJNL8DKgnSWb-TM-2YxfcoTFZ0/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64-OL.tar.gz
-touch mqadv_dev915_linux_x86-64-OL.tar.gz
-tar -xzf mqadv_dev915_linux_x86-64-OL.tar.gz
+
+## 7.8
+#wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/ZlAMoWJ4WpCF_MfiC4ceLhHYdmYt3J-rjZcivjWHkIw/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64-OL.tar.gz
+#touch mqadv_dev915_linux_x86-64-OL.tar.gz
+#tar -xzf mqadv_dev915_linux_x86-64-OL.tar.gz
+
+## 7.7
+wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/Ms5ayciUxAIpCtTnqQcnYk3Rmkkr8to1gEJG0wwf8PQ/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64.tar.gz 
+touch mqadv_dev915_linux_x86-64.tar.gz
+tar -xzf mqadv_dev915_linux_x86-64.tar.gz
+
 
 
 ###################################

@@ -10,7 +10,8 @@ set -e
 ## 1. Disable root password:
 ## 
 ##   $> ssh <user_name>@<ip_address> -p <user_name><password>
-##   $> sudo -i <enter_root_password>
+##   $> sudo -i 
+##      <enter_root_password>
 ##   $> passwd -d root
 ##
 ## 2. Setup passwordless ssh logins:
