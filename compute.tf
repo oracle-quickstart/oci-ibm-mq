@@ -1,17 +1,8 @@
 locals {
   ad = var.availability_domain_number >= 0 ? data.oci_identity_availability_domains.availability_domains.availability_domains[max(0, var.availability_domain_number)]["name"] : var.availability_domain_name
 
-  # Platform OL7 image regarless of region
-  # platform_image = data.oci_core_images.ol7.images[0].id
- 
-  # OL7.5 ashburn specific
-  # platform_image = "ocid1.image.oc1.iad.aaaaaaaa2tq67tvbeavcmioghquci6p3pvqwbneq3vfy7fe7m7geiga4cnxa"
-
   # RHEL 7.7
-  platform_image = "ocid1.image.oc1.iad.aaaaaaaampfbdyufdqwxj4l2tqlzmpdtpfhvjmobjx2phtdmys63sixlxvma"
-
-  # RHEL 7.8
-  # platform_image = "ocid1.image.oc1.iad.aaaaaaaaudagrloi24f6ivdjimgmfwz7z7jx55yyt3dov7sprzdjf7x4zdia"
+  platform_image = "ocid1.image.oc1.iad.aaaaaaaaq52zngvo3ofa42jz73x432mz4btosqjv76zpyzywgttjqa2opqpq"
 
   # Logic to choose platform or mkpl image based on var.enabled
   image          = var.enabled ? var.mp_listing_resource_id : local.platform_image
@@ -39,7 +30,7 @@ resource "oci_core_instance" "node" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(file("./scripts/IBM_MQ_installer.sh"))
+    user_data = base64encode(file("./scripts/IBM_MQ_boot_script.sh"))
   }
 
   count = var.node_count
