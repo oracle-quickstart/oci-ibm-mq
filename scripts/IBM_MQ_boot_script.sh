@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -x
 
+systemctl stop firewalld
+systemctl disable firewalld
+
 
 ##################################
 ## Each node requires a volume group named drbdpool. The 
@@ -47,6 +50,7 @@ vgcreate drbdpool ${vg_path}
 ## Clear the /var/mqm/rdqm.ini and define the Pacemaker cluster
 ##
 ##   https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q130290_.htm
+. /opt/mqm/bin/setmqenv -s
 if [ -f /var/mqm/rdqm.ini ] ; then mv /var/mqm/rdqm.ini /var/mqm/rdqm.ini.bak ; fi
 for n in 0 1 2; do
   echo "Node:" >> /var/mqm/rdqm.ini
@@ -56,8 +60,31 @@ rdqmadm -c
 
 
 ## Any firewall must allow traffic between the nodes on a range of ports.
-/opt/mqm/samp/rdqm/firewalld/configure.sh
+## /opt/mqm/samp/rdqm/firewalld/configure.sh
 
 
 ## If the system uses SELinux in a mode other than permissive, you must run the following command:
-semanage permissive -a drbd_t
+## semanage permissive -a drbd_t
+
+## Display version
+## $> dspmqver
+
+## Create an RDQM
+## https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.con.doc/q130310_.htm
+## root@node1> crtmqm -sxs -fs 3072M RDQMtest
+## root@node2> crtmqm -sxs -fs 3072M RDQMtest
+## root@node0> crtmqm -sx -fs 3072M RDQMtest
+
+## Set Preferred location
+## https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.con.doc/q130330_.htm
+## root@node0> rdqmadm -p -m RDQMtest -n rdqm-node-0
+
+## To view status
+## https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.con.doc/q130360_.htm
+## rdqmstatus
+## rdqmstatus -n
+## rdqmstatus -m qmname
+
+## Starting an RDQM
+## https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.con.doc/q130320_.htm
+## $> strmqm qmname
