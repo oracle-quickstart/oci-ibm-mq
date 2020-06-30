@@ -10,15 +10,20 @@ set -x
 ##
 ## https://github.com/ibm-messaging/mq-rdqm/blob/master/cloud/azure/Image.md
 ###################################
-cp /etc/sysctl.conf /etc/sysctl.conf.bkp
-echo 'kernel.sem = 32 4096 32 128' >> /etc/sysctl.conf
-echo 'kernel.threads-max = 32768' >> /etc/sysctl.conf
-echo 'fs.file-max = 524288' >> /etc/sysctl.conf
-echo "net.ipv4.tcp_timestamps = 0" >> /etc/sysctl.conf
-sysctl -p
-cp /etc/security/limits.conf /etc/security/limits.conf.bkp
-echo '* - nofile 10240' >> /etc/security/limits.conf
-echo 'root - nofile 10240' >> /etc/security/limits.conf
+
+## These changes were not implemented. The modification to 
+## the /etc/sysctl.conf causes issues with the iscsi calls
+## for attaching block volumens.
+
+# cp /etc/sysctl.conf /etc/sysctl.conf.bkp
+# echo 'kernel.sem = 32 4096 32 128' >> /etc/sysctl.conf
+# echo 'kernel.threads-max = 32768' >> /etc/sysctl.conf
+# echo 'fs.file-max = 524288' >> /etc/sysctl.conf
+# echo "net.ipv4.tcp_timestamps = 0" >> /etc/sysctl.conf
+# sysctl -p
+# cp /etc/security/limits.conf /etc/security/limits.conf.bkp
+# echo '* - nofile 10240' >> /etc/security/limits.conf
+# echo 'root - nofile 10240' >> /etc/security/limits.conf
 
 
 ###################################
@@ -51,7 +56,7 @@ cd MQServer
 ###################################
 ## Make this installation the primary installation.
 ###################################
-/opt/mqm/bin/setmqinst -i -p /opt/mqm
+# /opt/mqm/bin/setmqinst -i -p /opt/mqm
 
 
 ###################################

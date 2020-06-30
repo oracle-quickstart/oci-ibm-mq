@@ -36,30 +36,28 @@ If that's good, we can go ahead and apply the deploy:
 
     $> terraform apply
 
-You'll need to enter `yes` when prompted.  The apply should take about seven minutes to run.  Once complete, you'll see something like this:
+You'll need to enter `yes` when prompted.  The apply should take two to three minutes.  Once complete, you'll see something like this:
 
 ![](./images/terraform_apply.png)
-
-When the apply is complete, the infrastructure will be deployed, but cloud-init scripts will still be running.  Those will wrap up asynchronously.  So, it'll be a few more minutes before your cluster is accessible.  Now is a good time to get a coffee.
 
 ## Connect to the Cluster
 When the `terraform apply` completed...
 
 ## SSH to a Node
-These machines are using Oracle Enterprise Linux (OEL).  The default login is opc.  You can SSH into the machine with a command like this:
+These machines are using Red Hat Enterprise Linux 7.7 (RHEL).  The default login is opc.  You can SSH into the machine with a command like this:
 
     $> ssh -i ~/.ssh/oci opc@<Public IP Address>
 
-You can debug deployments by investigating the cloud-init log file `/var/log/messages`.  You'll need to `sudo su` to be able to read it:
+You can debug deployments by investigating the cloud-init entries in the  journal using the `journalctl` utility:
 
-    $> sudo grep cloud-init /var/log/messages
+    $> sudo -i
+    $> journalctl | grep cloud-init
 
 ![](./images/cloud-init.png)
 
 ## Run IBM MQ commands
 Become root to source the IBM MQ installation output the version of the IBMQ software:
 
-    $> sudo -i
     $> . /opt/mqm/bin/setmqenv -s
     $> dspmqver
     
