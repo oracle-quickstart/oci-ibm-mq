@@ -2,7 +2,7 @@ locals {
   ad = var.availability_domain_number >= 0 ? data.oci_identity_availability_domains.availability_domains.availability_domains[max(0, var.availability_domain_number)]["name"] : var.availability_domain_name
 
   # RHEL 7.7
-  platform_image = "ocid1.image.oc1.iad.aaaaaaaaq52zngvo3ofa42jz73x432mz4btosqjv76zpyzywgttjqa2opqpq"
+  platform_image = "ocid1.image.oc1.iad.aaaaaaaav5yg323zkdwaqlm45ddmvtauupem34pfve4wdknhwf36vlgzbxuq"
 
   # Logic to choose platform or mkpl image based on var.enabled
   image          = var.enabled ? var.mp_listing_resource_id : local.platform_image
