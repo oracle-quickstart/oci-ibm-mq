@@ -14,7 +14,7 @@ variable "region" {
 ############################
 
 variable "enabled" {
-  type = bool
+  type    = bool
   default = false
 }
 
@@ -140,17 +140,16 @@ variable "nsg_display_name" {
 }
 
 variable "disk_count" {
-  description = "Each node requires a volume group named drbdpool." 
+  description = "Each node requires a volume group named drbdpool."
   default     = 1
 }
 
-variable "node_count" {
-  description = "An RDQM configuration consists of three servers."
-  default     = 3
+variable "starting_ip" {
+  description = "First IP (of 3 used) for RDQM nodes. NOTE: IP availability not checked pre deploy."
+  default     = "10.0.0.2"
 }
 
 variable "disk_size" {
   description = "Configuration doc uses 16Gig. Lets use 50Gig to be safe."
   default     = 50
 }
-
