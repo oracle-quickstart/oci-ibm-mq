@@ -1,8 +1,19 @@
 # oci-ibm-mq
-These are Terraform modules that deploy IBM MQ on Oracle Cloud Infrastructure (OCI). They are developed jointly by Oracle and IBM.
+These are Terraform modules that deploy IBM MQ on Oracle Cloud Infrastructure (OCI). They are developed jointly by Oracle and IBM. 
 
 ## Prerequisites
-First off you'll need to do some pre deploy setup.  That's all detailed [here](https://github.com/oracle-quickstart/oci-prerequisites).
+1. First off you'll need to do some pre deploy setup.  That's all detailed [here](https://github.com/oracle-quickstart/oci-prerequisites).
+
+2. The compute image for the IBM MQ image is a custom image based off Oracle Linux 7.7. It has Red Hat Compatible Kernel (RHCK) and a few minor changes to the Linux kernel configuration. In order for this README to work, users will need to [download the custom image](https://objectstorage.us-ashburn-1.oraclecloud.com/p/HBb6fQS2Yg_lNVtX7WR-G8YlinMKixxdUkBzeZROo6w/n/partners/b/bucket-20200513-1843/o/OracleLinux7.7-RHCK-limits.conf) and put it into their tenancy as a custom image. ***Users will need to refer to the OCID of this custom image in the terraform code.***
+
+For reference, the changes made to the standard Oracle Linux 7.7 image can be describes as follows:
+
+    ## Set the GRUB 2 boot loader to load RHCK at reboot.
+    $> grubby --set-default /boot/vmlinuz-3.10.0-1062.12.1.el7.x86_64
+    
+    ## Add the following lines to the /etc/security/limits.conf file.
+    echo '* - nofile 10240'
+    echo 'root - nofile 10240'
 
 ## Clone the Module
 Now, you'll want a local copy of this repo.  You can make that with the commands:
@@ -14,6 +25,10 @@ Now, you'll want a local copy of this repo.  You can make that with the commands
 That should give you this:
 
 ![](./images/ls.png)
+
+Modify the `compute.tf` file to refer to your custom image OCID downloaded from above.
+
+![](./images/custom_ocid.png)
 
 We now need to initialize the directory with the module in it.  This makes the module aware of the OCI provider.  You can do this by running:
 
@@ -46,18 +61,20 @@ When the `terraform apply` completed...
 ## SSH to a Node
 These machines are using Red Hat Enterprise Linux 7.7 (RHEL).  The default login is opc.  You can SSH into the machine with a command like this:
 
-    $> ssh -i ~/.ssh/oci opc@<Public IP Address>
+    $> ssh -i ~/.ssh/oci opc@<public_ip_address>
 
-You can debug deployments by investigating the cloud-init entries in the  journal using the `journalctl` utility:
+You can debug deployments by investigating the cloud-init entries in the `/var/log/messages` file:
 
     $> sudo -i
-    $> journalctl | grep cloud-init
+    $> cd /var/logs
+    $> grep cloud-init messages
 
 ![](./images/cloud-init.png)
 
 ## Run IBM MQ commands
-Become root to source the IBM MQ installation output the version of the IBMQ software:
+Become user `root` to source the IBM MQ installation output the version of the IBMQ software:
 
+    $> sudo -i
     $> . /opt/mqm/bin/setmqenv -s
     $> dspmqver
     
