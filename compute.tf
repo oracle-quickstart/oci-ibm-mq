@@ -1,8 +1,8 @@
 locals {
   ad = var.availability_domain_number >= 0 ? data.oci_identity_availability_domains.availability_domains.availability_domains[max(0, var.availability_domain_number)]["name"] : var.availability_domain_name
 
-  # RHEL 7.7
-  platform_image = "ocid1.image.oc1.iad.aaaaaaaav5yg323zkdwaqlm45ddmvtauupem34pfve4wdknhwf36vlgzbxuq"
+  # Oracle Linux 7.7 (RHCK)
+  platform_image = "ocid1.image.oc1.iad.aaaaaaaa4lhdakk7rlvmp7telercmkz3bizjuikmfk6bgchmf6dpau3dmbva"
 
   # Logic to choose platform or mkpl image based on var.enabled
   image = var.enabled ? var.mp_listing_resource_id : local.platform_image
@@ -31,7 +31,7 @@ resource "oci_core_instance" "node" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data           = base64encode(file("./scripts/IBM_MQ_boot_script.sh"))
+    user_data           = base64encode(file("./scripts/IBM_MQ_installer.sh"))
   }
 
   count = 3
