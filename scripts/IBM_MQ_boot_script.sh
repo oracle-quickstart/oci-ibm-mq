@@ -1,8 +1,40 @@
 #!/usr/bin/env bash
 set -x
 
+###################################
+## https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.ins.doc/q130560_.htm
+###################################
+
 systemctl stop firewalld
 systemctl disable firewalld
+
+
+cp /etc/security/limits.conf /etc/security/limits.conf.bkp
+echo '* - nofile 10240' >> /etc/security/limits.conf
+echo 'root - nofile 10240' >> /etc/security/limits.conf
+
+
+###################################
+## The DRBD and Pacemaker packages are signed with the LINBIT GPG key. 
+## Use the following command to import the public LINBIT GPG key:
+###################################
+rpm --import https://packages.linbit.com/package-signing-pubkey.asc
+
+
+
+###################################
+## Get the installation binary and extract
+###################################
+wget https://objectstorage.us-ashburn-1.oraclecloud.com/p/MHNlnxzh2geqvDGIppXsM3qjbxJ_R-7F8VxCaPq-v5g/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64.tar.gz
+tar -xvzf mqadv_dev915_linux_x86-64.tar.gz
+
+
+
+
+
+
+
+
 
 
 ##################################
