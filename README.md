@@ -59,11 +59,11 @@ You'll need to enter `yes` when prompted.  The apply should take two to three mi
 When the `terraform apply` completed...
 
 ## SSH to a Node
-These machines are using Red Hat Enterprise Linux 7.7 (RHEL).  The default login is opc.  You can SSH into the machine with a command like this:
+These machines are using Oracle Linux 7.7.  The default login is opc.  You can SSH into the machine with a command like this:
 
     $> ssh -i ~/.ssh/oci opc@<public_ip_address>
 
-You can debug deployments by investigating the cloud-init entries in the `/var/log/messages` file:
+Configuration is happening asyncronously, and is complete when cloud-init finishes. You can view status or debug deployments by investigating the cloud-init entries in the `/var/log/messages` file:
 
     $> sudo -i
     $> cd /var/logs
