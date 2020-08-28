@@ -75,10 +75,14 @@ cd MQServer
 
 
 ###################################
-## Install IBM MQ, RDQM, Pacemaker, and DRBD
+## Install IBM MQ RDQM, Pacemaker, and DRBD
 ###################################
-./Advanced/RDQM/installRDQMsupport
 
+## RDQM
+## ./Advanced/RDQM/installRDQMsupport
+
+## MQ
+rpm -ivh MQSeries*.rpm
 
 ###################################
 ## Make this installation the primary installation.
