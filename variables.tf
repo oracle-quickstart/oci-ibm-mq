@@ -69,12 +69,12 @@ variable "ssh_public_key" {
 ############################
 
 variable "network_strategy" {
-  #default = "Use Existing VCN and Subnet"
-  default = "Create New VCN and Subnet"
+  default = "Use Existing VCN and Subnet"
+  #default = "Create New VCN and Subnet"
 }
 
 variable "vcn_id" {
-  default = ""
+  default = "ocid1.vcn.oc1.iad.amaaaaaaugt6wmqa3vej2lt7gxqmophjucn6kwnbum65t4cmz6fet7x3orvq"
 }
 
 variable "vcn_display_name" {
@@ -103,7 +103,7 @@ variable "subnet_span" {
 }
 
 variable "subnet_id" {
-  default = ""
+  default = "ocid1.subnet.oc1.iad.aaaaaaaak5cq5bx4ozgwc23uq5dkt5zhenx4gqbx3rbnfpt3shbyexrxd75a"
 }
 
 variable "subnet_display_name" {
