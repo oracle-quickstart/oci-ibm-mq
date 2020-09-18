@@ -1,5 +1,5 @@
-# oci-ibm-mq
-These are Terraform modules that deploy IBM MQ on Oracle Cloud Infrastructure (OCI). They are developed jointly by Oracle and IBM. 
+# RDQM 
+These are Terraform modules that deploy IBM MQ RDQM configuration on Oracle Cloud Infrastructure (OCI). They are developed jointly by Oracle and IBM. 
 
 ## Prerequisites
 1. First off you'll need to do some pre deploy setup.  That's all detailed [here](https://github.com/oracle-quickstart/oci-prerequisites).
