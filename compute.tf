@@ -2,9 +2,10 @@
 locals {
   ad = var.availability_domain_number >= 0 ? data.oci_identity_availability_domains.availability_domains.availability_domains[max(0, var.availability_domain_number)]["name"] : var.availability_domain_name
 
-  # Oracle Linux 7.7 (RHCK)
-  # platform_image = "ocid1.image.oc1.iad.aaaaaaaa4lhdakk7rlvmp7telercmkz3bizjuikmfk6bgchmf6dpau3dmbva"
-  
+  # Oracle-Linux-7.7-2020.01.28-0 image for ashburn-1 region.
+  # See this list for proper image ocid for alternate regions:
+  #    https://docs.cloud.oracle.com/en-us/iaas/images/image/0a72692a-bdbb-46fc-b17b-6e0a3fedeb23/
+  #
   platform_image = "ocid1.image.oc1.iad.aaaaaaaamspvs3amw74gzpux4tmn6gx4okfbe3lbf5ukeheed6va67usq7qq"
 
   # Logic to choose platform or mkpl image based on var.enabled

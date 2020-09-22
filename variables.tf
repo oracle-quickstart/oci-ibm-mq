@@ -74,7 +74,7 @@ variable "network_strategy" {
 }
 
 variable "vcn_id" {
-  default = "ocid1.vcn.oc1.iad.amaaaaaaugt6wmqa3vej2lt7gxqmophjucn6kwnbum65t4cmz6fet7x3orvq"
+  default = "ocid1.vcn.oc1.iad.amaaaaaaugt6wmqa2mqhkeluwlmlhfcxh6pg25w36jcdayqmnky3lw5ljxya"
 }
 
 variable "vcn_display_name" {
@@ -103,7 +103,7 @@ variable "subnet_span" {
 }
 
 variable "subnet_id" {
-  default = "ocid1.subnet.oc1.iad.aaaaaaaak5cq5bx4ozgwc23uq5dkt5zhenx4gqbx3rbnfpt3shbyexrxd75a"
+  default = "ocid1.subnet.oc1.iad.aaaaaaaanasy6lskbx45krbgtw3c3omuvhushajwvvi5ocrakfvyg75qcqiq" 
 }
 
 variable "subnet_display_name" {
