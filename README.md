@@ -35,7 +35,9 @@ Users will need to make 3 modifications:
 
 ![](./images/custom_ocid.png)
 
- 1. Set the 
+ 1. Set the `vcn_id` variable in the `variables.tf` file to the OCID of the virtuakl cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> Virtual Cloud Network Details*
+ 
+ ![](./images/vcn_ocid.png)
 
 We now need to initialize the directory with the module in it.  This makes the module aware of the OCI provider.  You can do this by running:
 
