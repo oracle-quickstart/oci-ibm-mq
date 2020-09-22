@@ -35,11 +35,15 @@ Users will need to make 3 modifications:
 
 ![](./images/custom_ocid.png)
 
- 1. Set the `vcn_id` variable in the `variables.tf` file to the OCID of the virtuakl cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> Virtual Cloud Network Details*
+ 2. Set the `vcn_id` variable in the `variables.tf` file to the OCID of the virtuakl cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> nfs*
  
  ![](./images/vcn_ocid.png)
 
-We now need to initialize the directory with the module in it.  This makes the module aware of the OCI provider.  You can do this by running:
+ 3. Set the `vcn_subnet_id` variable in the `variables.tf` file to the OCID of the virtuakl cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> nfs -> public*
+ 
+  ![](./images/vcn_subnet_ocid.png)
+ 
+ We now need to initialize the directory with the module in it.  This makes the module aware of the OCI provider.  You can do this by running:
 
     $> terraform init
 
@@ -64,11 +68,11 @@ You'll need to enter `yes` when prompted.  The apply should take two to three mi
 
 ![](./images/terraform_apply.png)
 
-## Connect to the Cluster
+## Connect to an MQ NODE
 When the `terraform apply` completed...
 
-## SSH to a Node
-These machines are using Oracle Linux 7.7.  The default login is opc.  You can SSH into the machine with a command like this:
+## SSH to an MQ Node
+When the `terraform apply` completes you can SSH into the one of the nodes of the IBM MQ cluster:
 
     $> ssh -i ~/.ssh/oci opc@<public_ip_address>
 
