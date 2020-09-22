@@ -3,24 +3,33 @@
 ```
  
 # IBM MQ
-These are Terraform modules that deploy IBM MQ on Oracle Cloud Infrastructure (OCI). They are developed jointly by Oracle and IBM. For an advanced RDQM installation which installs on a Red Hat compute instance see [RDQM/README.md](RDQM/README.md) (not fully supported yet).
+These are Terraform modules that deploy IBM MQ nodes on Oracle Cloud Infrastructure (OCI). They are developed jointly by Oracle and IBM. For an advanced IBM QM installation (referred to as RDQM) which installs on a Red Hat compute instance see [RDQM/README.md](RDQM/README.md) (not fully supported yet).
 
-## Prerequisites
-1. First off you'll need to do some pre deploy setup.  That's all detailed [here](https://github.com/oracle-quickstart/oci-prerequisites).
+## Prerequisites One: Setting up your terraform configuration
+First off you'll need to do some pre deploy setup.  That's all detailed [here](https://github.com/oracle-quickstart/oci-prerequisites).
 
-2. The compute image for the IBM MQ image is a custom image based off Oracle Linux 7.7. It has Red Hat Compatible Kernel (RHCK) and a few minor changes to the Linux kernel configuration. In order for this README to work, users will need to [download the custom image](https://objectstorage.us-ashburn-1.oraclecloud.com/p/HBb6fQS2Yg_lNVtX7WR-G8YlinMKixxdUkBzeZROo6w/n/partners/b/bucket-20200513-1843/o/OracleLinux7.7-RHCK-limits.conf) and put it into their tenancy as a custom image. ***Users will need to refer to the OCID of this custom image in the terraform code.***
+## Prerequisite Two: Set up a shared file system
+IBM MQ requires a shared file system to store queue manager data. At the time of writing this document, users will need to launch an [NFS Server High Availibilty Cluster](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/82147253) into their tenancy prior to launching the MQ nodes created by this Quick Start. Launch the NSF server stack with the following parameters:
 
-For reference, the changes made to the standard Oracle Linux 7.7 image can be describes as follows:
-
-    ## Set the GRUB 2 boot loader to load RHCK at reboot.
-    $> grubby --set-default /boot/vmlinuz-3.10.0-1062.12.1.el7.x86_64
-    
-    ## Add the following lines to the /etc/security/limits.conf file.
-    echo '* - nofile 10240'
-    echo 'root - nofile 10240'
+ * FILESYSTEM TYPE: *Persistent*
+ * ACTIVE/PASSIVE HIGHLY AVAILABLE: *Check*
+ * SSH PUBLIC KEY: *Copy/paste `~/.ssh/oci`*
+ * AVAILABILITY DOMAIN: *users choice*
+ * USE EXISTING VCN: *Uncheck*
+ * VPC CIDR: *default*
+ * BASTION COMPUTE SHAPE: *default*
+ * BASTION_HOSTNAME_PREFIX: *default*
+ * NFS STORAGE SERVER COMPUTE SHAPE: *VM.Standard2.8*
+ * STORAGE_SERVER_HOSTNAME_PREFIX: *default*
+ * BLOCK VOLUME STORAGE PERFORMACE TIER: *default*
+ * NUMBER OF BLOCK VOLUMES: *default:2 ?*
+ * BLOCK VOLUME SIZE: *default:50 ?*
+ * QUOROM SERVER COMPUTE SHAPE: *default*
+ * QUOROM SERVER HOSTNAME: *default*
+ * CREATE COMPUTE NODES: *Uncheck*
 
 ## Clone the Module
-Now, you'll want a local copy of this repo.  You can make that with the commands:
+Now that the prerequisites are out of the way, you'll want a local copy of this repo.  You can make that with the commands:
 
     $> git clone https://github.com/oracle-quickstart/oci-ibm-mq.git
     $> cd oci-ibm-mq
