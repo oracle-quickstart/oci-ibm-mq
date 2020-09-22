@@ -69,9 +69,6 @@ You'll need to enter `yes` when prompted.  The apply should take two to three mi
 ![](./images/terraform_apply.png)
 
 ## Connect to an MQ NODE
-When the `terraform apply` completed...
-
-## SSH to an MQ Node
 When the `terraform apply` completes you can SSH into the one of the nodes of the IBM MQ cluster:
 
     $> ssh -i ~/.ssh/oci opc@<public_ip_address>
@@ -85,24 +82,20 @@ Configuration is happening asyncronously, and is complete when cloud-init finish
 ![](./images/cloud-init.png)
 
 ## Run IBM MQ commands
-Become user `root` to source the IBM MQ installation output the version of the IBMQ software:
+Source the IBM MQ installation script and display the version of the IBMQ software:
 
-    $> sudo -i
     $> . /opt/mqm/bin/setmqenv -s
     $> dspmqver
     
 ![](./images/IBMMQ_ver.png)
 
-Check the status of other nodes in the cluster:
+Check the status of the active and standy nodes:
 
-    $> rdqmstatus -n
+    $> dspmq -x
 
-![](./images/RDQM_status.png)
+![](./images/MQ_status.png)
 
-## View the Cluster in the Console
-You can also login to the web console to view the IaaS that is running the cluster.
-
-![](./images/console.png)
+## Test the installation
 
 ## Destroy the Deployment
 When you no longer need the deployment, you can run this command to destroy it:
