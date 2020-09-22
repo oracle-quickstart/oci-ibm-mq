@@ -11,22 +11,22 @@ First off you'll need to do some pre deploy setup.  That's all detailed [here](h
 ## Prerequisite Two: Set up a shared file system
 IBM MQ requires a shared file system to store queue manager data. At the time of writing this document, users will need to launch an [NFS Server High Availibilty Cluster](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/82147253) into their tenancy prior to launching the MQ nodes created by this Quick Start. Launch the NSF server stack with the following parameters:
 
- * FILESYSTEM TYPE: Persistent
- * ACTIVE/PASSIVE HIGHLY AVAILABLE: Check
- * SSH PUBLIC KEY: Copy/paste `~/.ssh/oci`
+ * FILESYSTEM TYPE: *Persistent*
+ * ACTIVE/PASSIVE HIGHLY AVAILABLE: *Check*
+ * SSH PUBLIC KEY: *Copy/paste `~/.ssh/oci`*
  * AVAILABILITY DOMAIN: *users choice*
- * USE EXISTING VCN: Uncheck
+ * USE EXISTING VCN: *Uncheck*
  * VPC CIDR: *default*
  * BASTION COMPUTE SHAPE: *default*
  * BASTION_HOSTNAME_PREFIX: *default*
- * NFS STORAGE SERVER COMPUTE SHAPE: VM.Standard2.8
+ * NFS STORAGE SERVER COMPUTE SHAPE: *VM.Standard2.8*
  * STORAGE_SERVER_HOSTNAME_PREFIX: *default*
  * BLOCK VOLUME STORAGE PERFORMACE TIER: *default*
  * NUMBER OF BLOCK VOLUMES: *default:2 ?*
  * BLOCK VOLUME SIZE: *default:50 ?*
  * QUOROM SERVER COMPUTE SHAPE: *default*
  * QUOROM SERVER HOSTNAME: *default*
- * CREATE COMPUTE NODES: Uncheck
+ * CREATE COMPUTE NODES: *Uncheck*
 
 ## Clone the Module
 Now that the prerequisites are out of the way, you'll want a local copy of this repo.  You can make that with the commands:
