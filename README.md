@@ -30,9 +30,12 @@ That should give you this:
 
 ![](./images/ls.png)
 
-Modify the `compute.tf` file to refer to your custom image OCID downloaded from above.
+Users will need to make 3 modifications:
+ 1. If your region is something other than "US East (Ashburn)" you will need to modify the `platform_image` variable in the `compute.tf` file to refer to the proper image ocid of the `Oracle-Linux-7.7-2020.01.28-0` image in your home region. See [this page](https://docs.cloud.oracle.com/en-us/iaas/images/image/0a72692a-bdbb-46fc-b17b-6e0a3fedeb23/) for the lookup table which correlates home region to image ocid. If your home region is "US East (Ashburn)" you can skip this step.
 
 ![](./images/custom_ocid.png)
+
+ 1. Set the 
 
 We now need to initialize the directory with the module in it.  This makes the module aware of the OCI provider.  You can do this by running:
 
