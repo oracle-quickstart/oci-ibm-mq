@@ -6,7 +6,7 @@
 # Output: $out_file
 
 out_file="orm.zip"
-schema="mkpl-schema.yaml"
+schema="../mkpl-schema.yaml"
 
 echo "TEST cleanup"
 rm -rf ./tmp_package
@@ -17,12 +17,14 @@ mkdir ./tmp_package
 
 echo "Copying .tf files to tmp dir...."
 cp -v ../*.tf ./tmp_package
+
 echo "Copying script directory to tmp dir...."
-cp -rv ../scripts ./tmp_package
+mkdir ./tmp_package/scripts
+cp -rv ../scripts/configure.sh ./tmp_package/scripts
 
 echo "Removing provider.tf...."
 rm ./tmp_package/provider.tf
-
+ 
 echo "Adding $schema..."
 cp $schema ./tmp_package
 

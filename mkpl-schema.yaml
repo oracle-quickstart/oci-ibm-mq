@@ -1,0 +1,107 @@
+# Title shown in Application Information tab.
+#title: Kinetica
+# Sub Title shown in Application Information tab.
+#description: In-memory GPU-accelerated database
+schemaVersion: 1.3.0
+version: "20200807"
+
+# URL of Logo Icon used on Application Information tab. Logo must be 130x130 pixels.
+# (Optional)
+#logoUrl: https://cloudmarketplace.oracle.com/marketplace/content?contentId=82964636
+
+locale: "en"
+groupings:
+  - title: "Hidden General Configuration"
+    visible: true
+    variables:
+    - tenancy_ocid
+    - compartment_ocid
+    - region
+    - mp_listing_id
+    - mp_listing_resource_id
+    - mp_listing_resource_version
+    - availability_domain_name
+    - availability_domain_number
+    - nsg_display_name
+    - vcn_cidr_block
+    - nsg_whitelist_ip    
+
+  - title: "MQ Configuration"
+    visible: true
+    variables:
+    - vm_compute_shape
+    - mq_node_hostname_prefix 
+    - ssh_public_key
+    
+
+  - title: "Virtual Cloud Network"
+    variables:
+    - network_compartment_ocid
+    - vcn_id
+    - subnet_id 
+
+variables:
+  vm_compute_shape:
+    title: "Compute Shape"
+    descirption: "Compute shape for MQ nodes."
+    type: oci:core:instanceshape:name
+    default: "VM.Standard2.4"
+    required: true
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      imageId: ${mp_listing_resource_id}
+
+  mq_node_hostname_prefix:
+    type: string
+    required: true
+    default: "mq-node-"
+    description: "MQ node hostname prefix "
+    visible: true
+  
+  ssh_public_key:
+    title: "SSH Public Key"
+    description: "Public key for all worker instances."
+    type: oci:core:ssh:publickey
+    required: true
+
+######################################################
+##############     NETWORK VARIABLES     #############
+######################################################
+
+  network_compartment_ocid:
+    type: oci:identity:compartment:id
+    required: true
+    title: Network Compartment
+    description: The compartment in which to create all Network resources
+    default: compartment_ocid
+
+######## VCN ########
+
+  vcn_id:
+    title: "Network"
+    description: "(default = nfs)"
+    type: oci:core:vcn:id
+    default: ""
+    required: true
+    dependsOn:
+      compartmentId: network_compartment_ocid
+
+  subnet_id:
+    title: "Subnet"
+    description: "(default = public)"
+    type: oci:core:subnet:id
+    default: ""
+    dependsOn:
+      vcnId: vcn_id
+      compartmentId: network_compartment_ocid
+    required: true
+
+#############################################
+###########    OUTPUT GROUPS     ############
+#############################################
+
+
+#############################################
+##############     OUTPUTS     ##############
+#############################################
+

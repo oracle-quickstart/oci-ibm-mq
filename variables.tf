@@ -13,11 +13,6 @@ variable "region" {
 #  Marketplace Image      #
 ############################
 
-variable "enabled" {
-  type    = bool
-  default = false
-}
-
 variable "mp_listing_id" {
   // default = "ocid1.appcataloglisting.oc1.."
   default     = ""
@@ -40,9 +35,8 @@ variable "mp_listing_resource_version" {
 #  Compute Configuration   #
 ############################
 
-variable "vm_display_name" {
-  description = "Instance Name"
-  default     = "OracleLinux_IBMMQ"
+variable "mq_node_hostname_prefix" {
+  default     = "mq-node-"
 }
 
 variable "vm_compute_shape" {
@@ -68,58 +62,15 @@ variable "ssh_public_key" {
 #  Network Configuration   #
 ############################
 
-variable "network_strategy" {
-  default = "Use Existing VCN and Subnet"
-  #default = "Create New VCN and Subnet"
-}
 
 variable "vcn_id" {
-  default = "ocid1.vcn.oc1.iad.amaaaaaaugt6wmqa2mqhkeluwlmlhfcxh6pg25w36jcdayqmnky3lw5ljxya"
-}
-
-variable "vcn_display_name" {
-  description = "VCN Name"
-  default     = "simple-vcn"
-}
-
-variable "vcn_cidr_block" {
-  description = "VCN CIDR"
-  default     = "10.0.0.0/16"
-}
-
-variable "vcn_dns_label" {
-  description = "VCN DNS Label"
-  default     = "simple"
-}
-
-variable "subnet_type" {
-  description = "Choose between private and public subnets"
-  default     = "Use Public Subnet"
-}
-
-variable "subnet_span" {
-  description = "Choose between regional and AD specific subnets"
-  default     = "Regional Subnet"
+  default = "ocid1.vcn.oc1.iad.amaaaaaaugt6wmqai5eyf7cylvrnhmwn6rvt3vjhzjhs2dce6qquhxrwuo3a"
 }
 
 variable "subnet_id" {
-  default = "ocid1.subnet.oc1.iad.aaaaaaaanasy6lskbx45krbgtw3c3omuvhushajwvvi5ocrakfvyg75qcqiq" 
+  default = "ocid1.subnet.oc1.iad.aaaaaaaa2trdxao3qxhmhg2cwzgqfdgcmohhjikqyz5zri4cpw46bn6j42eq"
 }
 
-variable "subnet_display_name" {
-  description = "Subnet Name"
-  default     = "simple-subnet"
-}
-
-variable "subnet_cidr_block" {
-  description = "Subnet CIDR"
-  default     = "10.0.0.0/24"
-}
-
-variable "subnet_dns_label" {
-  description = "Subnet DNS Label"
-  default     = "management"
-}
 
 ############################
 # Additional Configuration #
@@ -129,27 +80,17 @@ variable "compartment_ocid" {
   description = "Compartment where infrastructure resources will be created"
 }
 
-variable "nsg_whitelist_ip" {
-  description = "Network Security Groups - Whitelisted CIDR block for ingress communication: Enter 0.0.0.0/0 or <your IP>/32"
-  default     = "0.0.0.0/0"
-}
-
 variable "nsg_display_name" {
   description = "Network Security Groups - Name"
   default     = "simple-security-group"
 }
 
-variable "disk_count" {
-  description = "Each node requires a volume group named drbdpool."
-  default     = 1
+variable "vcn_cidr_block" {
+  description = "VCN CIDR"
+  default     = "10.0.0.0/16"
 }
 
-variable "starting_ip" {
-  description = "First IP (of 3 used) for RDQM nodes. NOTE: IP availability not checked pre deploy."
-  default     = "10.0.0.2"
-}
-
-variable "disk_size" {
-  description = "Configuration doc uses 16Gig. Lets use 50Gig to be safe."
-  default     = 50
+variable "nsg_whitelist_ip" {
+  description = "Network Security Groups - Whitelisted CIDR block for ingress communication: Enter 0.0.0.0/0 or <your IP>/32"
+  default     = "0.0.0.0/0"
 }

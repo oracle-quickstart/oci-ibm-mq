@@ -1,8 +1,8 @@
 set -x
 
-export MQ_NAME="MQ1"
+export MQ_NAME="QM1"
 export NFS_SERVER_IP="10.0.3.200"
-export SERVER_MOUNT_DIR=/
+export SERVER_MOUNT_DIR=/mnt/nfsshare/exports
 export CLIENT_MOUNT_DIR=/mnt/nfsv4
 
 function mount_nfs_server {
@@ -27,32 +27,36 @@ function install_ibmmq {
 ## https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q018300_.htm
 function create_queue_manager {
 
-  if [ -d ${CLIENT_MOUNT_DIR}/MQHA${MQ_INSTALL_NUMBER} ]; then
-    rm -rf ${CLIENT_MOUNT_DIR}/MQHA${MQ_INSTALL_NUMBER}
-  fi 
-  mkdir ${CLIENT_MOUNT_DIR}/MQHA${MQ_INSTALL_NUMBER}
-  
-  ln -s ${CLIENT_MOUNT_DIR}/MQHA${MQ_INSTALL_NUMBER} /MQHA
-
-  if [ ! -d /MQHA/logs ]; then
-    mkdir /MQHA/logs
-  fi
-  
-  if [ ! -d /MQHA/qmgrs ]; then
-    mkdir /MQHA/qmgrs
-  fi
-
-  chown -R mqm:mqm /MQHA/
-  chmod -R ug+rwx /MQHA/
-
   if [[ `hostname` == *0 ]]; then
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ;  crtmqm -ld /MQHA/logs -md /MQHA/qmgrs $MQ_NAME'
-    sleep 10
+    if [ -d ${CLIENT_MOUNT_DIR}/MQHA${MQ_INSTALL_NUMBER} ]; then
+      rm -rf ${CLIENT_MOUNT_DIR}/MQHA${MQ_INSTALL_NUMBER}
+    fi 
+    mkdir ${CLIENT_MOUNT_DIR}/MQHA${MQ_INSTALL_NUMBER} 
+    ln -s ${CLIENT_MOUNT_DIR}/MQHA${MQ_INSTALL_NUMBER} /MQHA
+    if [ ! -d /MQHA/logs ]; then
+      mkdir /MQHA/logs
+    fi
+    if [ ! -d /MQHA/qmgrs ]; then
+      mkdir /MQHA/qmgrs
+    fi
+    chown -R mqm:mqm /MQHA/
+    chmod -R ug+rwx /MQHA/
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ;  crtmqm -ld /MQHA/logs -md /MQHA/qmgrs QM1'
+    sleep 30
   elif [[ `hostname` == *1 ]]; then
-    sleep 10
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; addmqinf -s QueueManager -v Name=$MQ_NAME -v Directory=$MQ_NAME -v Prefix=/var/mqm -v DataPath=/MQHA/qmgrs/$MQ_NAME'
+    sleep 30
+    ln -s ${CLIENT_MOUNT_DIR}/MQHA${MQ_INSTALL_NUMBER} /MQHA
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; addmqinf -s QueueManager -v Name=QM1 -v Directory=QM1 -v Prefix=/var/mqm -v DataPath=/MQHA/qmgrs/QM1'
   fi
-  sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x $MQ_NAME'
+
+  
+  if [[ `hostname` == *0 ]]; then
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
+    sleep 30
+  elif [[ `hostname` == *1 ]]; then
+    sleep 30
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
+  fi
 }
 
 sudo setenforce 0
