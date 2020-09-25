@@ -44,11 +44,11 @@ Users will need to make 3 modifications:
 
 ![](./images/custom_ocid.png)
 
- 2. Set the `vcn_id` variable in the `variables.tf` file to the OCID of the virtuakl cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> nfs*
+ 2. Set the `vcn_id` variable in the `variables.tf` file to the OCID of the *nfs* virtual cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> nfs -> OCID*
  
  ![](./images/vcn_ocid.png)
 
- 3. Set the `vcn_subnet_id` variable in the `variables.tf` file to the OCID of the virtuakl cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> nfs -> public*
+ 3. Set the `vcn_subnet_id` variable in the `variables.tf` file to the OCID of the *public* subnet of the virtual cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> nfs -> public -> OCID*
  
   ![](./images/vcn_subnet_ocid.png)
  
