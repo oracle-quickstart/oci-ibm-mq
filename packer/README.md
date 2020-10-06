@@ -1,11 +1,11 @@
 # oci-quickstart-template
 Packer is a tool provided by Hashicorp that allows you to automate creation of your machine images.
 ## Specifications
- * oci CLI v2.9.7 ([download](https://docs.cloud.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm#InstallingtheCLI))
- * packer v1.5.4  ([download](https://packer.io/intro/getting-started/install.html))
- 
+ * oci CLI ([download](https://docs.cloud.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm#InstallingtheCLI))
+ * packer ([download](https://packer.io/intro/getting-started/install.html))
+
 Click [here](https://docs.cloud.oracle.com/en-us/iaas/Content/API/SDKDocs/cliconfigure.htm) to learn more about how to configure your OCI CLI.
- 
+
 ## Instructions
 1. Clone the oci-quickstart-template repository:
 ```
@@ -58,7 +58,7 @@ Users will need to log into their tenancy to find the required information for s
   https://console.us-ashburn-1.oraclecloud.com/a/tenancy?cloudshell=true
 
 <details><summary>PACKER_availibilty_domain</summary><p>
- 
+
 The list of Availibility Domains available to a tenancy can be obtained using the following command:
 ```
 $> oci iam availability-domain list | jq -r '.data[].name'
@@ -70,7 +70,7 @@ IYfK:US-ASHBURN-AD-3
 
 
 <details><summary>PACKER_compartment_ocid</summary><p>
- 
+
 The list of Compartment names and corresponding ocids available to a tenancy can be listed using the following command:
 ```
 $> oci iam compartment list |  jq -r '.data[] | .name + " = " + .id'
@@ -89,7 +89,7 @@ See the [Tenancy Compartments](https://console.us-ashburn-1.oraclecloud.com/iden
 
 <details><summary>PACKER_base_image_ocid</summary>
 <p>
- 
+
 The list of Base Image names and corresponding ocids available to a tenancy can be listed using the following command:
 ```
 $> oci compute image list -c <insert_compartment_ocid_here> | jq -r '.data[] | ."display-name" + " = " + ."id"'
@@ -104,11 +104,11 @@ A complete list of Base Images available within OCI can be seen on the [OCI All 
 
 
 <details><summary>PACKER_shape</summary><p>
- 
+
 The list of Compute Shapes available to a tenancy can be listed using the following command:
 ```
 $> oci compute shape list -c <insert_compartment_ocid_here> | jq -r '.data[].shape'
-VM.Standard2.1 
+VM.Standard2.1
 VM.Standard2.2
 [...]
 ```
@@ -123,7 +123,7 @@ The complete list of Compute Shapes available within OCI can also be seen on the
 <details><summary>PACKER_ssh_username</summary><p>
 
 Oracle Linux ssh user is ```opc```
- 
+
 CentOS ssh user is ```opc```
 
 Ubuntu ssh user is ```ubuntu```
@@ -131,12 +131,12 @@ Ubuntu ssh user is ```ubuntu```
 
 
 
-<details><summary>PACKER_subnet_ocid</summary><p> 
+<details><summary>PACKER_subnet_ocid</summary><p>
 
-See the Virtual Cloud Networks page for a list of networks in this tenancy. Click "Networking Quickstart" or click an existing network to get the ocid. 
- 
+See the Virtual Cloud Networks page for a list of networks in this tenancy. Click "Networking Quickstart" or click an existing network to get the ocid.
+
 *IMPORTANT: The ocid MUST be for the Public Subnet*
- 
+
 ![ScreenShot](images/public_network.png)
 
 </p></details>
