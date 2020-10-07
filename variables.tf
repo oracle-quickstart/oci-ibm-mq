@@ -7,8 +7,12 @@ module "nfs" {
   region           = var.region
   ssh_public_key   = var.ssh_public_key
   use_existing_vcn = "true"
-  vcn_id           = var.vcn_id 
-  storage_subnet_id = var.storage_subnet_id
+  storage_subnet_id = oci_core_subnet.storage[0].id 
+  fs_subnet_id     = oci_core_subnet.fs[0].id
+  bastion_subnet_id = oci_core_subnet.public[0].id
+  vcn_id           = oci_core_virtual_network.nfs[0].id
+  ad_name          = local.ad
+  client_node_count= 0
 }
 
 ############################
@@ -44,8 +48,8 @@ variable "availability_domain_name" {
 }
 
 variable "availability_domain_number" {
-  default     = 1
-  description = "OCI Availability Domains: 1,2,3  (subject to region availability)"
+  default     = 0
+  description = "OCI Availability Domains: 0,1,2  (subject to region availability)"
 }
 
 variable "ssh_public_key" {
