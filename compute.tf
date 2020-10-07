@@ -8,6 +8,8 @@ locals {
   #
   image = "ocid1.image.oc1.iad.aaaaaaaamspvs3amw74gzpux4tmn6gx4okfbe3lbf5ukeheed6va67usq7qq"
 
+  derived_storage_server_node_count=2
+  storage_subnet_id = var.use_existing_vcn ? var.storage_subnet_id : element(concat(oci_core_subnet.storage.*.id, [""]), 0)
 }
 
 resource "oci_core_instance" "node" {
@@ -23,11 +25,10 @@ resource "oci_core_instance" "node" {
   }
 
   create_vnic_details {
-    subnet_id        = var.subnet_id
+    subnet_id        = oci_core_subnet.public[0].id
     hostname_label   = "${var.mq_node_hostname_prefix}${count.index}"
     display_name     = "${var.mq_node_hostname_prefix}${count.index}"
     assign_public_ip = true
-    nsg_ids          = [oci_core_network_security_group.nsg.id]
   }
 
   metadata = {
