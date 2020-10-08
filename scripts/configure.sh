@@ -15,7 +15,7 @@ function mount_nfs_server {
 function install_ibmmq {
 
   if [ ! -e mqadv_dev915_linux_x86-64.tar.gz ]; then
-    wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/MHNlnxzh2geqvDGIppXsM3qjbxJ_R-7F8VxCaPq-v5g/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64.tar.gz
+    wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/WXTu55FWJ-1GCLzWc3p9003lEtQ5p-MCPE-vlr78Df2zMaS2RgsntP-BcOXB93Vb/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64.tar.gz 
     tar -xzf mqadv_dev915_linux_x86-64.tar.gz
   fi
   cd MQServer
