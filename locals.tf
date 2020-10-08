@@ -21,9 +21,9 @@ locals {
   listing_resource_id      = var.mp_listing_resource_id
   listing_resource_version = var.mp_listing_resource_version
 
-  derived_storage_server_node_count=2
-  storage_subnet_id = var.use_existing_vcn ? var.storage_subnet_id : element(concat(oci_core_subnet.storage.*.id, [""]), 0)
-  
+  derived_storage_server_node_count = 2
+  storage_subnet_id                 = var.use_existing_vcn ? var.storage_subnet_id : element(concat(oci_core_subnet.storage.*.id, [""]), 0)
+
   # local.use_existing_network referenced in network.tf
   use_existing_network = var.network_strategy == var.network_strategy_enum["USE_EXISTING_VCN_SUBNET"] ? true : false
 }

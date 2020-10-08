@@ -83,7 +83,7 @@ resource "oci_core_security_list" "private_security_list" {
     protocol    = "all"
   }
 
-  ingress_security_rules  {
+  ingress_security_rules {
     protocol = "all"
     source   = var.vpc_cidr
   }
@@ -107,7 +107,7 @@ resource "oci_core_subnet" "public" {
 # Regional subnet - private
 resource "oci_core_subnet" "storage" {
   count                      = var.use_existing_vcn ? 0 : 1
-  cidr_block                 = cidrsubnet(var.vpc_cidr, 8, count.index+3)
+  cidr_block                 = cidrsubnet(var.vpc_cidr, 8, count.index + 3)
   display_name               = "private_storage"
   compartment_id             = var.compartment_ocid
   vcn_id                     = oci_core_virtual_network.nfs[0].id

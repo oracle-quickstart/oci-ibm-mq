@@ -22,6 +22,10 @@ data "oci_identity_availability_domain" "ad" {
   ad_number      = var.availability_domain_number
 }
 
+data "oci_identity_tenancy" "tenancy" {
+  tenancy_id = var.tenancy_ocid
+}
+
 data "oci_identity_regions" "home-region" {
   filter {
     name   = "key"

@@ -1,18 +1,18 @@
 #Variables declared in this file must be declared in the marketplace.yaml
 
 module "nfs" {
-  source           = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/aLmgffTKuLlgVabFGyjlcI3-SARgGmbtthFUj6vvEWcNZi16P04fS1nsb44AgeeE/n/partners/b/bucket-20200513-1843/o/nfs.zip"
-  tenancy_ocid     = var.tenancy_ocid
-  compartment_ocid = var.compartment_ocid
-  region           = var.region
-  ssh_public_key   = var.ssh_public_key
-  use_existing_vcn = "true"
+  source            = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/aLmgffTKuLlgVabFGyjlcI3-SARgGmbtthFUj6vvEWcNZi16P04fS1nsb44AgeeE/n/partners/b/bucket-20200513-1843/o/nfs.zip"
+  tenancy_ocid      = var.tenancy_ocid
+  compartment_ocid  = var.compartment_ocid
+  region            = var.region
+  ssh_public_key    = var.ssh_public_key
+  use_existing_vcn  = "true"
   storage_subnet_id = oci_core_subnet.storage[0].id
-  fs_subnet_id     = oci_core_subnet.fs[0].id
+  fs_subnet_id      = oci_core_subnet.fs[0].id
   bastion_subnet_id = oci_core_subnet.public[0].id
-  vcn_id           = oci_core_virtual_network.nfs[0].id
-  ad_name          = local.ad
-  client_node_count= 0
+  vcn_id            = oci_core_virtual_network.nfs[0].id
+  ad_name           = local.ad
+  client_node_count = 0
 }
 
 ############################
@@ -59,7 +59,7 @@ variable "mp_listing_resource_version" {
 ############################
 
 variable "mq_node_hostname_prefix" {
-  default     = "mq-node-"
+  default = "mq-node-"
 }
 
 variable "vm_compute_shape" {

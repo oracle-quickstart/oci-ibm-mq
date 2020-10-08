@@ -1,7 +1,6 @@
-
 provider "oci" {
-  alias        = "home_region"
-  region       = "${var.home_region}"
+  alias  = "home_region"
+  region = lookup(data.oci_identity_regions.home-region.regions[0], "name")
 }
 
 
