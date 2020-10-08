@@ -16,3 +16,15 @@ data "oci_core_images" "ol7" {
 data "oci_identity_availability_domains" "availability_domains" {
   compartment_id = var.compartment_ocid
 }
+
+data "oci_identity_availability_domain" "ad" {
+  compartment_id = var.tenancy_ocid
+  ad_number      = var.availability_domain_number
+}
+
+data "oci_identity_regions" "home-region" {
+  filter {
+    name   = "key"
+    values = [data.oci_identity_tenancy.tenancy.home_region_key]
+  }
+}

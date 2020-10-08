@@ -13,21 +13,29 @@ variable "region" {
 #  Marketplace Image      #
 ############################
 
-variable "mp_listing_id" {
-  // default = "ocid1.appcataloglisting.oc1.."
+variable "custom_image_id" {
   default     = ""
+  description = "Custom Image OCID"
+}
+
+variable "mp_subscription_enabled" {
+  description = "Subscribe to Marketplace listing?"
+  type        = bool
+  default     = true
+}
+
+variable "mp_listing_id" {
+  default     = "ocid1.appcataloglisting.oc1..aaaaaaaavsl2ivajgog5fkagcixvnckrycfaw2uogpp5hbgh6emj7zou3vpa"
   description = "Marketplace Listing OCID"
 }
 
 variable "mp_listing_resource_id" {
-  // default = "ocid1.image.oc1.."
-  default     = ""
+  default     = "ocid1.image.oc1..aaaaaaaa7fqtftixxzcxclxmdbfvk2ko6rmq5jnc6jk77wq7xjm5ijo2qahq"
   description = "Marketplace Listing Image OCID"
 }
 
 variable "mp_listing_resource_version" {
-  // default = "1.0"
-  default     = ""
+  default     = "9.1"
   description = "Marketplace Listing Package/Resource Version"
 }
 
@@ -50,8 +58,8 @@ variable "availability_domain_name" {
 }
 
 variable "availability_domain_number" {
-  default     = 0
-  description = "OCI Availability Domains: 0,1,2  (subject to region availability)"
+  default     = 1
+  description = "OCI Availability Domains: 1,2,3  (subject to region availability)"
 }
 
 variable "ssh_public_key" {
