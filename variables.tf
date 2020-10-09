@@ -1,18 +1,19 @@
 #Variables declared in this file must be declared in the marketplace.yaml
 
 module "nfs" {
-  source           = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/aLmgffTKuLlgVabFGyjlcI3-SARgGmbtthFUj6vvEWcNZi16P04fS1nsb44AgeeE/n/partners/b/bucket-20200513-1843/o/nfs.zip"
-  tenancy_ocid     = var.tenancy_ocid
-  compartment_ocid = var.compartment_ocid
-  region           = var.region
-  ssh_public_key   = var.ssh_public_key
-  use_existing_vcn = "true"
-  storage_subnet_id = oci_core_subnet.storage[0].id 
-  fs_subnet_id     = oci_core_subnet.fs[0].id
+  source            = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/aLmgffTKuLlgVabFGyjlcI3-SARgGmbtthFUj6vvEWcNZi16P04fS1nsb44AgeeE/n/partners/b/bucket-20200513-1843/o/nfs.zip"
+  tenancy_ocid      = var.tenancy_ocid
+  compartment_ocid  = var.compartment_ocid
+  region            = var.region
+  ssh_public_key    = var.ssh_public_key
+  use_existing_vcn  = "true"
+  storage_subnet_id = oci_core_subnet.storage[0].id
+  fs_subnet_id      = oci_core_subnet.fs[0].id
   bastion_subnet_id = oci_core_subnet.public[0].id
-  vcn_id           = oci_core_virtual_network.nfs[0].id
-  ad_name          = local.ad
-  client_node_count= 0
+  vcn_id            = oci_core_virtual_network.nfs[0].id
+  ad_name           = local.ad
+  client_node_count = 0
+  rm_only_ha_vip_private_ip = "10.0.3.200"
 }
 
 ############################
@@ -28,13 +29,38 @@ variable "region" {
 #  Marketplace Image      #
 ############################
 
+variable "custom_image_id" {
+  default     = ""
+  description = "Custom Image OCID"
+}
+
+variable "mp_subscription_enabled" {
+  description = "Subscribe to Marketplace listing?"
+  type        = bool
+  default     = true
+}
+
+variable "mp_listing_id" {
+  default     = "ocid1.appcataloglisting.oc1..aaaaaaaavsl2ivajgog5fkagcixvnckrycfaw2uogpp5hbgh6emj7zou3vpa"
+  description = "Marketplace Listing OCID"
+}
+
+variable "mp_listing_resource_id" {
+  default     = "ocid1.image.oc1..aaaaaaaa7fqtftixxzcxclxmdbfvk2ko6rmq5jnc6jk77wq7xjm5ijo2qahq"
+  description = "Marketplace Listing Image OCID"
+}
+
+variable "mp_listing_resource_version" {
+  default     = "9.1"
+  description = "Marketplace Listing Package/Resource Version"
+}
 
 ############################
 #  Compute Configuration   #
 ############################
 
 variable "mq_node_hostname_prefix" {
-  default     = "mq-node-"
+  default = "mq-node-"
 }
 
 variable "vm_compute_shape" {
@@ -48,8 +74,8 @@ variable "availability_domain_name" {
 }
 
 variable "availability_domain_number" {
-  default     = 0
-  description = "OCI Availability Domains: 0,1,2  (subject to region availability)"
+  default     = 1
+  description = "OCI Availability Domains: 1,2,3  (subject to region availability)"
 }
 
 variable "ssh_public_key" {
@@ -90,7 +116,7 @@ variable "vcn_dns_label" {
 variable "subnet_type" {
   description = "Choose between private and public subnets"
   default     = "Public Subnet"
-  #or  
+  #or
   #default     = "Private Subnet"
 }
 

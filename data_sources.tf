@@ -17,22 +17,18 @@ data "oci_identity_availability_domains" "availability_domains" {
   compartment_id = var.compartment_ocid
 }
 
+data "oci_identity_availability_domain" "ad" {
+  compartment_id = var.tenancy_ocid
+  ad_number      = var.availability_domain_number
+}
 
+data "oci_identity_tenancy" "tenancy" {
+  tenancy_id = var.tenancy_ocid
+}
 
-#data "oci_core_subnet" "private_storage_subnet" {
-#  subnet_id = var.storage_subnet_id
-#}
-
-#data "oci_core_subnet" "private_fs_subnet" {
-#  subnet_id = var.subnet_id
-#}
-
-#data "oci_core_subnet" "public_subnet" {
-#  subnet_id = var.subnet_id
-#}
-
-#data "oci_core_vcn" "nfs" {
-#  vcn_id = var.vcn_id 
-#}
-
-
+data "oci_identity_regions" "home-region" {
+  filter {
+    name   = "key"
+    values = [data.oci_identity_tenancy.tenancy.home_region_key]
+  }
+}
