@@ -8,26 +8,6 @@ These are Terraform modules that deploy IBM MQ nodes on Oracle Cloud Infrastruct
 ## Prerequisites One: Setting up your terraform configuration
 First off you'll need to do some pre deploy setup.  That's all detailed [here](https://github.com/oracle-quickstart/oci-prerequisites).
 
-## Prerequisite Two: Set up a shared file system
-IBM MQ requires a shared file system to store queue manager data. At the time of writing this document, users will need to launch an [NFS Server High Availibilty Cluster](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/82147253) into their tenancy prior to launching the MQ nodes created by this Quick Start. Launch the NSF server stack with the following parameters:
-
- * FILESYSTEM TYPE: *Persistent*
- * ACTIVE/PASSIVE HIGHLY AVAILABLE: *Check*
- * SSH PUBLIC KEY: *Copy/paste `~/.ssh/oci`*
- * AVAILABILITY DOMAIN: *users choice*
- * USE EXISTING VCN: *Uncheck*
- * VPC CIDR: *default*
- * BASTION COMPUTE SHAPE: *default*
- * BASTION_HOSTNAME_PREFIX: *default*
- * NFS STORAGE SERVER COMPUTE SHAPE: *VM.Standard2.8*
- * STORAGE_SERVER_HOSTNAME_PREFIX: *default*
- * BLOCK VOLUME STORAGE PERFORMACE TIER: *default*
- * NUMBER OF BLOCK VOLUMES: *default:2 ?*
- * BLOCK VOLUME SIZE: *default:50 ?*
- * QUOROM SERVER COMPUTE SHAPE: *default*
- * QUOROM SERVER HOSTNAME: *default*
- * CREATE COMPUTE NODES: *Uncheck*
-
 ## Clone the Module
 Now that the prerequisites are out of the way, you'll want a local copy of this repo.  You can make that with the commands:
 
@@ -38,19 +18,6 @@ Now that the prerequisites are out of the way, you'll want a local copy of this 
 That should give you this:
 
 ![](./images/ls.png)
-
-Users will need to make 3 modifications:
- 1. If your region is something other than "US East (Ashburn)" you will need to modify the `platform_image` variable in the `compute.tf` file to refer to the proper image ocid of the `Oracle-Linux-7.7-2020.01.28-0` image in your home region. See [this page](https://docs.cloud.oracle.com/en-us/iaas/images/image/0a72692a-bdbb-46fc-b17b-6e0a3fedeb23/) for the lookup table which correlates home region to image ocid. If your home region is "US East (Ashburn)" you can skip this step.
-
-![](./images/custom_ocid.png)
-
- 2. Set the `vcn_id` variable in the `variables.tf` file to the OCID of the *nfs* virtual cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> nfs -> OCID*
- 
- ![](./images/vcn_ocid.png)
-
- 3. Set the `vcn_subnet_id` variable in the `variables.tf` file to the OCID of the *public* subnet of the virtual cloud network. This can be found Using the *Control Panel navigation menu -> Networking -> Virtual Cloud Networks -> nfs -> public -> OCID*
- 
-  ![](./images/vcn_subnet_ocid.png)
  
  We now need to initialize the directory with the module in it.  This makes the module aware of the OCI provider.  You can do this by running:
 
