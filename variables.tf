@@ -13,6 +13,7 @@ module "nfs" {
   vcn_id            = oci_core_virtual_network.nfs[0].id
   ad_name           = local.ad
   client_node_count = 0
+  rm_only_ha_vip_private_ip = "10.0.3.200"
 }
 
 ############################
