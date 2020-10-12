@@ -16,6 +16,10 @@ module "nfs" {
   rm_only_ha_vip_private_ip = "10.0.3.200"
 }
 
+variable "mq_url" {
+  default     = ""
+}
+
 ############################
 #  Hidden Variable Group   #
 ############################
