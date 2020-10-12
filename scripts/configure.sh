@@ -21,8 +21,13 @@ function mount_nfs_server {
 ## https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.ins.doc/q008640_.htm
 function install_ibmmq {
 
-  if [ ! -e mqadv_dev915_linux_x86-64.tar.gz ]; then
-    wget -q https://objectstorage.us-ashburn-1.oraclecloud.com/p/WXTu55FWJ-1GCLzWc3p9003lEtQ5p-MCPE-vlr78Df2zMaS2RgsntP-BcOXB93Vb/n/partners/b/bucket-20200513-1843/o/mqadv_dev915_linux_x86-64.tar.gz 
+  cd ~opc
+  if [[ ! -z $MQ_URL ]]; then
+    ## MQ_URL is defined. So download the installer
+    rm *.tar.gz
+    wget -q $MQ_URL
+    tar -xzf ${MQ_URL##*/}
+  else
     tar -xzf mqadv_dev915_linux_x86-64.tar.gz
   fi
   cd MQServer
@@ -49,9 +54,9 @@ function create_queue_manager {
     chown -R mqm:mqm /MQHA/
     chmod -R ug+rwx /MQHA/
     sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ;  crtmqm -ld /MQHA/logs -md /MQHA/qmgrs QM1'
-    sleep 30
+    sleep 65
   elif [[ `hostname` == *1 ]]; then
-    sleep 30
+    sleep 65
     ln -s ${CLIENT_MOUNT_DIR}/MQHA /MQHA
     sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; addmqinf -s QueueManager -v Name=QM1 -v Directory=QM1 -v Prefix=/var/mqm -v DataPath=/MQHA/qmgrs/QM1'
   fi
@@ -59,9 +64,9 @@ function create_queue_manager {
   
   if [[ `hostname` == *0 ]]; then
     sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
-    sleep 30
+    sleep 65
   elif [[ `hostname` == *1 ]]; then
-    sleep 30
+    sleep 65
     sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
   fi
 }

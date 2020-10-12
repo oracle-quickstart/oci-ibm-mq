@@ -25,6 +25,7 @@ resource "oci_core_instance" "node" {
         "\n",
         [
           "#!/usr/bin/env bash",
+          "MQ_URL=\"${var.mq_url}\"",
           file("./scripts/configure.sh"),
         ],
       )
