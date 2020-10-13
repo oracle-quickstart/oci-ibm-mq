@@ -1,7 +1,7 @@
 #Variables declared in this file must be declared in the marketplace.yaml
 
 module "nfs" {
-  source            = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/aLmgffTKuLlgVabFGyjlcI3-SARgGmbtthFUj6vvEWcNZi16P04fS1nsb44AgeeE/n/partners/b/bucket-20200513-1843/o/nfs.zip"
+  source            = "https://objectstorage.us-ashburn-1.oraclecloud.com/n/marketplaceprod/b/oracleapps/o/orchestration%2F85482691%2Fnfs.zip"
   tenancy_ocid      = var.tenancy_ocid
   compartment_ocid  = var.compartment_ocid
   region            = var.region
@@ -63,8 +63,13 @@ variable "mp_listing_resource_version" {
 #  Compute Configuration   #
 ############################
 
+variable "num_mq_pairs" {
+  default = 2
+  description = "The number is mq mode pairs to be spun up."
+}
+
 variable "mq_node_hostname_prefix" {
-  default = "mq-node-"
+  default = "mq-node"
 }
 
 variable "vm_compute_shape" {

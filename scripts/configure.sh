@@ -39,12 +39,19 @@ function install_ibmmq {
 ## https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q018300_.htm
 function create_queue_manager {
 
+  HOSTNAME=`hostname`
+  PREFIX_PAIRNUM=${HOSTNAME%-*}
+  PAIRNUM=${PREFIX_PAIRNUM##*-}
+  MQ_DIR=${CLIENT_MOUNT_DIR}/MQHA-${PAIRNUM}
+
+  ## TODO!! This needs to be revisted. Could potentially delete user data
+  ## if deployed onto an existing network.
   if [[ `hostname` == *0 ]]; then
-    if [ -d ${CLIENT_MOUNT_DIR}/MQHA ]; then
-      rm -rf ${CLIENT_MOUNT_DIR}/MQHA
+    if [ -d ${MQ_DIR} ]; then
+      rm -rf ${MQ_DIR}
     fi 
-    mkdir ${CLIENT_MOUNT_DIR}/MQHA
-    ln -s ${CLIENT_MOUNT_DIR}/MQHA /MQHA
+    mkdir ${MQ_DIR}
+    ln -s ${MQ_DIR} /MQHA
     if [ ! -d /MQHA/logs ]; then
       mkdir /MQHA/logs
     fi
@@ -53,21 +60,28 @@ function create_queue_manager {
     fi
     chown -R mqm:mqm /MQHA/
     chmod -R ug+rwx /MQHA/
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ;  crtmqm -ld /MQHA/logs -md /MQHA/qmgrs QM1'
-    sleep 65
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; crtmqm -ld /MQHA/logs -md /MQHA/qmgrs QM1'
+    touch ${MQ_DIR}/qm.created.0
+    while [ ! -e ${MQ_DIR}/qm.created.1 ]; do
+       sleep 10
+    done
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
+    touch ${MQ_DIR}/qm.started.0
   elif [[ `hostname` == *1 ]]; then
-    sleep 65
-    ln -s ${CLIENT_MOUNT_DIR}/MQHA /MQHA
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; addmqinf -s QueueManager -v Name=QM1 -v Directory=QM1 -v Prefix=/var/mqm -v DataPath=/MQHA/qmgrs/QM1'
+    while [ ! -e ${MQ_DIR}/qm.created.0 ]; do
+       sleep 10
+    done
+    ln -s ${MQ_DIR} /MQHA
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; addmqinf -s QueueManager -v Name=QM1 -v Directory=QM1 -v Prefix=/var/mqm -v DataPath=/MQHA/qmgrs/QM1' 
+    touch ${MQ_DIR}/qm.created.1
+    while [ ! -e ${MQ_DIR}/qm.started.0 ]; do
+       sleep 10
+    done
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
   fi
 
-  
-  if [[ `hostname` == *0 ]]; then
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
-    sleep 65
-  elif [[ `hostname` == *1 ]]; then
-    sleep 65
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
+  if [[ `hostname` == *1 ]]; then
+    rm -f  ${MQ_DIR}/qm.created.* ${MQ_DIR}/qm.started.0
   fi
 }
 
