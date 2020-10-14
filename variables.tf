@@ -14,6 +14,9 @@ module "nfs" {
   ad_name           = local.ad
   client_node_count = 0
   rm_only_ha_vip_private_ip = "10.0.3.200"
+  persistent_storage_server_shape = "VM.Standard2.4"
+  storage_tier_1_disk_count = "4"
+  storage_tier_1_disk_size = "100" 
 }
 
 variable "mq_url" {
@@ -64,12 +67,16 @@ variable "mp_listing_resource_version" {
 ############################
 
 variable "num_mq_pairs" {
-  default = 2
+  default = 1
   description = "The number is mq mode pairs to be spun up."
 }
 
 variable "mq_node_hostname_prefix" {
   default = "mq-node"
+}
+
+variable mount_point { 
+  default = "/mnt/nfs" 
 }
 
 variable "vm_compute_shape" {
@@ -91,8 +98,6 @@ variable "ssh_public_key" {
   description = "SSH Public Key"
 }
 
-variable "create_compute_nodes" { default = "true" }
-
 ############################
 #  Network Configuration   #
 ############################
@@ -106,78 +111,10 @@ variable "use_existing_vcn" {
   default = "false"
 }
 
-variable "vcn_id" {
-  default = ""
-}
-
-variable "vcn_display_name" {
-  description = "VCN Name"
-  default     = "simple-vcn"
-}
-
 variable "vpc_cidr" { default = "10.0.0.0/16" }
-
-variable "vcn_dns_label" {
-  description = "VCN DNS Label"
-  default     = "simplevcn"
-}
-
-variable "subnet_type" {
-  description = "Choose between private and public subnets"
-  default     = "Public Subnet"
-  #or
-  #default     = "Private Subnet"
-}
-
-variable "subnet_id" {
-  default = ""
-}
-
-variable "subnet_display_name" {
-  description = "Subnet Name"
-  default     = "simple-subnet"
-}
-
-variable "subnet_cidr_block" {
-  description = "Subnet CIDR"
-  default     = "10.0.0.0/24"
-}
-
-variable "subnet_dns_label" {
-  description = "Subnet DNS Label"
-  default     = "simplesubnet"
-}
 
 variable "storage_subnet_id" {
   default = ""
-}
-
-############################
-# Security Configuration #
-############################
-variable "nsg_display_name" {
-  description = "Network Security Group Name"
-  default     = "simple-network-security-group"
-}
-
-variable "nsg_source_cidr" {
-  description = "Allowed Ingress Traffic (CIDR Block)"
-  default     = "0.0.0.0/0"
-}
-
-variable "nsg_ssh_port" {
-  description = "SSH Port"
-  default     = 22
-}
-
-variable "nsg_https_port" {
-  description = "HTTPS Port"
-  default     = 443
-}
-
-variable "nsg_http_port" {
-  description = "HTTP Port"
-  default     = 80
 }
 
 ############################
@@ -188,12 +125,6 @@ variable "compartment_ocid" {
   description = "Compartment where infrastructure resources will be created"
 }
 
-
-
-
-
-
-
 ######################
 #    Enum Values     #
 ######################
@@ -202,22 +133,5 @@ variable "network_strategy_enum" {
   default = {
     CREATE_NEW_VCN_SUBNET   = "Create New VCN and Subnet"
     USE_EXISTING_VCN_SUBNET = "Use Existing VCN and Subnet"
-  }
-}
-
-variable "subnet_type_enum" {
-  type = map
-  default = {
-    PRIVATE_SUBNET = "Private Subnet"
-    PUBLIC_SUBNET  = "Public Subnet"
-  }
-}
-
-variable "nsg_config_enum" {
-  type = map
-  default = {
-    BLOCK_ALL_PORTS = "Block all ports"
-    OPEN_ALL_PORTS  = "Open all ports"
-    CUSTOMIZE       = "Customize ports - Post deployment"
   }
 }

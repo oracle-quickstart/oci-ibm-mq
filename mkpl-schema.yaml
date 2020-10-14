@@ -12,7 +12,7 @@ version: "20200807"
 locale: "en"
 groupings:
   - title: "Hidden General Configuration"
-    visible: true
+    visible: false
     variables:
     - tenancy_ocid
     - compartment_ocid
@@ -22,24 +22,27 @@ groupings:
     - mp_listing_resource_version
     - availability_domain_name
     - availability_domain_number
-    - nsg_display_name
     - vcn_cidr_block
-    - nsg_whitelist_ip    
+    - vcn_id
+    - subnet_id
+    - mq_url
+    - custom_image_id
+    - network_strategy 
+    - use_existing_vcn
+    - vpc_cidr
+    - network_strategy_enum
+    - mp_subscription_enabled
+    - mount_point
+    - storage_subnet_id
 
   - title: "MQ Configuration"
     visible: true
     variables:
     - vm_compute_shape
     - mq_node_hostname_prefix 
+    - num_mq_pairs 
     - ssh_public_key
     
-
-  - title: "Virtual Cloud Network"
-    variables:
-    - network_compartment_ocid
-    - vcn_id
-    - subnet_id 
-
 variables:
   vm_compute_shape:
     title: "Compute Shape"
@@ -54,7 +57,7 @@ variables:
   mq_node_hostname_prefix:
     type: string
     required: true
-    default: "mq-node-"
+    default: "mq-node"
     description: "MQ node hostname prefix "
     visible: true
   
@@ -64,44 +67,6 @@ variables:
     type: oci:core:ssh:publickey
     required: true
 
-######################################################
-##############     NETWORK VARIABLES     #############
-######################################################
-
-  network_compartment_ocid:
-    type: oci:identity:compartment:id
-    required: true
-    title: Network Compartment
-    description: The compartment in which to create all Network resources
-    default: compartment_ocid
-
-######## VCN ########
-
-  vcn_id:
-    title: "Network"
-    description: "(default = nfs)"
-    type: oci:core:vcn:id
-    default: ""
-    required: true
-    dependsOn:
-      compartmentId: network_compartment_ocid
-
-  subnet_id:
-    title: "Subnet"
-    description: "(default = public)"
-    type: oci:core:subnet:id
-    default: ""
-    dependsOn:
-      vcnId: vcn_id
-      compartmentId: network_compartment_ocid
-    required: true
-
-#############################################
-###########    OUTPUT GROUPS     ############
-#############################################
-
-
 #############################################
 ##############     OUTPUTS     ##############
 #############################################
-
