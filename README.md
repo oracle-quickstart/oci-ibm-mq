@@ -1,6 +1,3 @@
-```diff
-! THIS README IS UNDER CONSTRUCTION !
-```
  
 # IBM MQ
 These are Terraform modules that deploy IBM MQ nodes on Oracle Cloud Infrastructure (OCI). They are developed jointly by Oracle and IBM. For an advanced IBM QM installation (referred to as RDQM) which installs on a Red Hat compute instance see [RDQM/README.md](RDQM/README.md) (not fully supported yet).
