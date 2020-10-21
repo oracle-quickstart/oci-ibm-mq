@@ -20,30 +20,87 @@ groupings:
     - mp_listing_id
     - mp_listing_resource_id
     - mp_listing_resource_version
-    - availability_domain_name
     - availability_domain_number
     - vcn_cidr_block
-    - vcn_id
-    - subnet_id
     - mq_url
     - custom_image_id
-    - network_strategy 
-    - use_existing_vcn
     - vpc_cidr
-    - network_strategy_enum
     - mp_subscription_enabled
-    - mount_point
-    - storage_subnet_id
-
+    - ad_number
   - title: "MQ Configuration"
     visible: true
     variables:
+    - num_mq_pairs 
     - vm_compute_shape
     - mq_node_hostname_prefix 
-    - num_mq_pairs 
+    - storage_tier_1_disk_count
+    - storage_tier_1_disk_size
+    - ad_name
     - ssh_public_key
-    
+  - title: "VCN Configuration"
+    visible: true
+    variables:
+    - use_existing_vcn
+    - vcn_id
+    - bastion_subnet_id
+    - storage_subnet_id
+    - rm_only_ha_vip_private_ip
 variables:
+
+  ad_name:
+    title: "Availability Domain"
+    description: "Availability Domain where filesystem is deployed."
+    type: oci:identity:availabilitydomain:name
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    required: true
+
+  use_existing_vcn:
+    type: boolean
+    title: "Use Existing VCN"
+    description: "Select checkbox, to use existing VCN, otherwise new VCN, subnets and related resources will be created"
+    required: true
+    default: false
+
+  vcn_id:
+    type: oci:core:vcn:id
+    title: "Existing VCN"
+    description: "Select Existing VCN"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    visible: ${use_existing_vcn}
+    required: true
+
+  bastion_subnet_id:
+    type: oci:core:subnet:id
+    title: "Public Subnet"
+    description: "Select a public subnet for the bastion server. Ensure the subnet is in the same Availability Domain selected above"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      vcnId: ${vcn_id}
+      hidePrivateSubnet: ${hide_private_subnet}
+    visible: ${use_existing_vcn}
+    required: true
+
+  storage_subnet_id:
+    type: oci:core:subnet:id
+    title: "Private Subnet"
+    description: "Select a private subnet for the storage servers. Ensure the subnet is in the same Availability Domain selected above."
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      vcnId: ${vcn_id}
+      hidePublicSubnet: ${hide_public_subnet}
+    visible: ${use_existing_vcn}
+    required: true
+
+  rm_only_ha_vip_private_ip:
+    type: string
+    title: "Virtual IP for HA (Highly Availability)"
+    description: "Floating Virtual IP which gets assigned to the active storage server. Provide an unused IP from the private subnet to be used to install NFS servers."
+    required: true
+    default: "10.0.3.200"
+    visible: ${use_existing_vcn}
+
   vm_compute_shape:
     title: "Compute Shape"
     descirption: "Compute shape for MQ nodes."
@@ -53,6 +110,15 @@ variables:
     dependsOn:
       compartmentId: ${compartment_ocid}
       imageId: ${mp_listing_resource_id}
+
+  num_mq_pairs:
+    title: "Number of MQ pairs"
+    type: integer
+    description: "The number is mq mode pairs to be spun up."
+    default: 1
+    minimum: 1
+    maximum: 100
+    required: true
 
   mq_node_hostname_prefix:
     type: string
@@ -65,6 +131,24 @@ variables:
     title: "SSH Public Key"
     description: "Public key for all worker instances."
     type: oci:core:ssh:publickey
+    required: true
+
+  storage_tier_1_disk_count:
+    title: "Number of block volumes"
+    description: "Number of block volume disk per file server. Each attached as JBOD (no RAID). Block Volumes are durable and highly available(HA)."
+    type: integer
+    default: 4
+    minimum: 1
+    maximum: 32
+    required: true
+
+  storage_tier_1_disk_size:
+    title: "Block volume size"
+    description: "Select size in GB for each block volume/disk, min 50."
+    type: integer
+    default: 100
+    minimum: 50
+    maximum: 32768
     required: true
 
 #############################################

@@ -7,7 +7,7 @@ locals {
   image = "ocid1.image.oc1.iad.aaaaaaaamspvs3amw74gzpux4tmn6gx4okfbe3lbf5ukeheed6va67usq7qq"
 
   # Logic to use AD name provided by user input on ORM or to lookup for the AD name when running from CLI
-  ad = (var.availability_domain_name != "" ? var.availability_domain_name : data.oci_identity_availability_domain.ad.name)
+  ad = (var.ad_name != "" ? var.ad_name : data.oci_identity_availability_domain.ad.name)
 
 
   # Logic to choose a custom image or a marketplace image.
@@ -21,9 +21,7 @@ locals {
   listing_resource_id      = var.mp_listing_resource_id
   listing_resource_version = var.mp_listing_resource_version
 
-  derived_storage_server_node_count = 2
   storage_subnet_id                 = var.use_existing_vcn ? var.storage_subnet_id : element(concat(oci_core_subnet.storage.*.id, [""]), 0)
-
-  # local.use_existing_network referenced in network.tf
-  use_existing_network = var.network_strategy == var.network_strategy_enum["USE_EXISTING_VCN_SUBNET"] ? true : false
+  bastion_subnet_id                 = var.use_existing_vcn ? var.bastion_subnet_id : element(concat(oci_core_subnet.public.*.id, [""]), 0)
+  vcn_id                            = var.use_existing_vcn ? var.vcn_id : oci_core_virtual_network.nfs[0].id
 }

@@ -7,16 +7,18 @@ module "nfs" {
   region            = var.region
   ssh_public_key    = var.ssh_public_key
   use_existing_vcn  = "true"
-  storage_subnet_id = oci_core_subnet.storage[0].id
-  fs_subnet_id      = oci_core_subnet.fs[0].id
-  bastion_subnet_id = oci_core_subnet.public[0].id
-  vcn_id            = oci_core_virtual_network.nfs[0].id
+
+  storage_subnet_id = local.storage_subnet_id 
+  fs_subnet_id      = local.storage_subnet_id
+  bastion_subnet_id = local.bastion_subnet_id
+  vcn_id            = local.vcn_id
+
   ad_name           = local.ad
   client_node_count = 0
-  rm_only_ha_vip_private_ip = "10.0.3.200"
+  rm_only_ha_vip_private_ip = var.rm_only_ha_vip_private_ip 
   persistent_storage_server_shape = "VM.Standard2.4"
-  storage_tier_1_disk_count = "4"
-  storage_tier_1_disk_size = "100" 
+  storage_tier_1_disk_count = var.storage_tier_1_disk_count
+  storage_tier_1_disk_size = var.storage_tier_1_disk_size
 }
 
 variable "mq_url" {
@@ -75,26 +77,23 @@ variable "mq_node_hostname_prefix" {
   default = "mq-node"
 }
 
-variable mount_point { 
-  default = "/mnt/nfs" 
-}
-
 variable "vm_compute_shape" {
   description = "Compute Shape"
   default     = "VM.Standard2.2" //2 cores
 }
 
-variable "availability_domain_name" {
+variable "ad_name" {
   default     = ""
   description = "Availability Domain"
 }
 
-variable "availability_domain_number" {
+variable "ad_number" {
   default     = 1
   description = "OCI Availability Domains: 1,2,3  (subject to region availability)"
 }
 
 variable "ssh_public_key" {
+  default = ""
   description = "SSH Public Key"
 }
 
@@ -102,19 +101,40 @@ variable "ssh_public_key" {
 #  Network Configuration   #
 ############################
 
-variable "network_strategy" {
-  #default = "Use Existing VCN and Subnet"
-  default = "Create New VCN and Subnet"
-}
-
 variable "use_existing_vcn" {
   default = "false"
 }
 
 variable "vpc_cidr" { default = "10.0.0.0/16" }
 
+variable "rm_only_ha_vip_private_ip" {
+  default = "10.0.3.200"
+}
+
+variable "vcn_id" {
+  default = ""
+}
+
+variable "bastion_subnet_id" {
+  default = ""
+}
+
 variable "storage_subnet_id" {
   default = ""
+}
+
+############################
+#  Network Configuration   #
+############################
+
+variable "storage_tier_1_disk_count" {
+  default = "4"
+  description = "Number of block volume disk for entire filesystem (not per file server). If var.fs_ha  was set to true, then these Block volumes will be shared by both NFS file servers,        otherwise a single node NFS server will be deployed with Block volumes. Block volumes are more durable and highly available."
+}
+
+variable "storage_tier_1_disk_size" {
+  default = "100"
+  description = "Select size in GB for each block volume/disk, min 50.  Total NFS filesystem raw capacity will be NUMBER OF BLOCK VOLUMES * BLOCK VOLUME SIZE."
 }
 
 ############################
@@ -123,15 +143,4 @@ variable "storage_subnet_id" {
 
 variable "compartment_ocid" {
   description = "Compartment where infrastructure resources will be created"
-}
-
-######################
-#    Enum Values     #
-######################
-variable "network_strategy_enum" {
-  type = map
-  default = {
-    CREATE_NEW_VCN_SUBNET   = "Create New VCN and Subnet"
-    USE_EXISTING_VCN_SUBNET = "Use Existing VCN and Subnet"
-  }
 }

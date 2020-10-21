@@ -13,7 +13,7 @@ resource "oci_core_instance" "node" {
   }
 
   create_vnic_details {
-    subnet_id        = oci_core_subnet.public[0].id
+    subnet_id        = local.bastion_subnet_id
     hostname_label   = "${var.mq_node_hostname_prefix}-${floor(count.index/2)}-${count.index % 2}"
     display_name     = "${var.mq_node_hostname_prefix}-${floor(count.index/2)}-${count.index % 2}"
     assign_public_ip = true

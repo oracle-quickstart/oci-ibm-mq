@@ -19,7 +19,7 @@ data "oci_identity_availability_domains" "availability_domains" {
 
 data "oci_identity_availability_domain" "ad" {
   compartment_id = var.tenancy_ocid
-  ad_number      = var.availability_domain_number
+  ad_number      = var.ad_number
 }
 
 data "oci_identity_tenancy" "tenancy" {

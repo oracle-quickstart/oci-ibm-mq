@@ -83,7 +83,7 @@ resource "oci_core_security_list" "private_security_list" {
     protocol    = "all"
   }
 
-  ingress_security_rules {
+  ingress_security_rules  {
     protocol = "all"
     source   = var.vpc_cidr
   }
@@ -107,7 +107,7 @@ resource "oci_core_subnet" "public" {
 # Regional subnet - private
 resource "oci_core_subnet" "storage" {
   count                      = var.use_existing_vcn ? 0 : 1
-  cidr_block                 = cidrsubnet(var.vpc_cidr, 8, count.index + 3)
+  cidr_block                 = cidrsubnet(var.vpc_cidr, 8, count.index+3)
   display_name               = "private_storage"
   compartment_id             = var.compartment_ocid
   vcn_id                     = oci_core_virtual_network.nfs[0].id
@@ -117,18 +117,4 @@ resource "oci_core_subnet" "storage" {
   prohibit_public_ip_on_vnic = true
   dns_label                  = "storage"
 }
-
-resource "oci_core_subnet" "fs" {
-  count                      = var.use_existing_vcn ? 0 : 1
-  cidr_block                 = cidrsubnet(var.vpc_cidr, 8, count.index + 6)
-  display_name               = "private_fs"
-  compartment_id             = var.compartment_ocid
-  vcn_id                     = oci_core_virtual_network.nfs[0].id
-  route_table_id             = oci_core_route_table.private_route_table[0].id
-  security_list_ids          = [oci_core_virtual_network.nfs[0].default_security_list_id, oci_core_security_list.private_security_list[0].id]
-  dhcp_options_id            = oci_core_virtual_network.nfs[0].default_dhcp_options_id
-  prohibit_public_ip_on_vnic = true
-  dns_label                  = "fs"
-}
-
 
