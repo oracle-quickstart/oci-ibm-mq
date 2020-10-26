@@ -1,8 +1,7 @@
 set -x
 
-export NFS_SERVER_IP="10.0.3.200"
-export SERVER_MOUNT_DIR=/mnt/nfsshare/exports
-export CLIENT_MOUNT_DIR=/mnt/nfsv4
+SERVER_MOUNT_DIR=/mnt/nfsshare/exports
+CLIENT_MOUNT_DIR=/mnt/nfsv4
 
 function mount_nfs_server {
   yum -y install nfs-utils

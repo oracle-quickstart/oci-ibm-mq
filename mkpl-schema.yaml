@@ -74,7 +74,7 @@ variables:
   bastion_subnet_id:
     type: oci:core:subnet:id
     title: "Public Subnet"
-    description: "Select a public subnet for the bastion server. Ensure the subnet is in the same Availability Domain selected above"
+    description: "Select a public subnet for the MQ nodes and the bastion server. Ensure the subnet is in the same Availability Domain selected above"
     dependsOn:
       compartmentId: ${compartment_ocid}
       vcnId: ${vcn_id}
@@ -96,7 +96,7 @@ variables:
   rm_only_ha_vip_private_ip:
     type: string
     title: "Virtual IP for HA (Highly Availability)"
-    description: "Floating Virtual IP which gets assigned to the active storage server. Provide an unused IP from the private subnet to be used to install NFS servers."
+    description: "Floating Virtual IP which gets assigned to the active storage server. Provide an unused IP from the private subnet."
     required: true
     default: "10.0.3.200"
     visible: ${use_existing_vcn}
@@ -114,7 +114,7 @@ variables:
   num_mq_pairs:
     title: "Number of MQ pairs"
     type: integer
-    description: "The number is mq mode pairs to be spun up."
+    description: "The number is mq node pairs to be spun up."
     default: 1
     minimum: 1
     maximum: 100
