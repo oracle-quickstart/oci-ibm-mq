@@ -1,4 +1,6 @@
- 
+[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://console.us-ashburn-1.oraclecloud.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-quickstart-template/archive/button.zip) 
+
+
 # IBM MQ
 These are Terraform modules that deploy IBM MQ nodes on Oracle Cloud Infrastructure (OCI). They are developed jointly by Oracle and IBM. For an advanced IBM QM installation (referred to as RDQM) which installs on a Red Hat compute instance see [RDQM/README.md](RDQM/README.md) (not fully supported yet).
 
