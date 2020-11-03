@@ -1,10 +1,14 @@
-[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://console.us-ashburn-1.oraclecloud.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-ibm-mq/archive/button.zip) 
-
-
 # IBM MQ
-These are Terraform modules that deploy IBM MQ nodes on Oracle Cloud Infrastructure (OCI). They are developed jointly by Oracle and IBM. For an advanced IBM QM installation (referred to as RDQM) which installs on a Red Hat compute instance see [RDQM/README.md](RDQM/README.md) (not fully supported yet).
+These are Terraform modules that deploy [IBM MQ](https://www.ibm.com/products/mq) nodes on Oracle Cloud Infrastructure. They are developed jointly by Oracle and IBM.
 
-## Prerequisites One: Setting up your terraform configuration
+## Resource Manager Deployment
+This Quick Start uses [OCI Resource Manager](https://docs.cloud.oracle.com/iaas/Content/ResourceManager/Concepts/resourcemanager.htm) to make deployment easy, sign up for an [OCI account](https://cloud.oracle.com/en_US/tryit) if you don't have one, and just click the button below:
+
+[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://console.us-ashburn-1.oraclecloud.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-ibm-mq/archive/master.zip) 
+
+Note, if you use this template to create another repo you'll need to change the link for the button to point at your repo.
+
+## Local Development
 First off you'll need to do some pre deploy setup.  That's all detailed [here](https://github.com/oracle-quickstart/oci-prerequisites).
 
 ## Clone the Module
@@ -17,7 +21,11 @@ Now that the prerequisites are out of the way, you'll want a local copy of this 
 That should give you this:
 
 ![](./images/ls.png)
+
+Rename the `provider.tf.cli` to `provider.tf`:
  
+    $> mv provider.tf.cli provider.tf
+    
  We now need to initialize the directory with the module in it.  This makes the module aware of the OCI provider.  You can do this by running:
 
     $> terraform init
