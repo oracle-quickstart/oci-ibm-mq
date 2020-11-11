@@ -43,12 +43,10 @@ function create_queue_manager {
   PAIRNUM=${PREFIX_PAIRNUM##*-}
   MQ_DIR=${CLIENT_MOUNT_DIR}/MQHA-${PAIRNUM}
 
-  ## TODO!! This needs to be revisted. Could potentially delete user data
-  ## if deployed onto an existing network.
   if [[ `hostname` == *0 ]]; then
-    if [ -d ${MQ_DIR} ]; then
-      rm -rf ${MQ_DIR}
-    fi 
+    while [ -d ${MQ_DIR} ]; do
+      MQ_DIR=${CLIENT_MOUNT_DIR}/`date +"%h-%d-%Y-%H:%M:%S"`
+    done
     mkdir ${MQ_DIR}
     ln -s ${MQ_DIR} /MQHA
     if [ ! -d /MQHA/logs ]; then
