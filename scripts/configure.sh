@@ -46,6 +46,7 @@ function create_queue_manager {
   if [[ `hostname` == *0 ]]; then
     while [ -d ${MQ_DIR} ]; do
       MQ_DIR=${CLIENT_MOUNT_DIR}/`date +"%h-%d-%Y-%H:%M:%S"`
+      sleep 1
     done
     mkdir ${MQ_DIR}
     ln -s ${MQ_DIR} /MQHA
