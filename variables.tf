@@ -77,6 +77,14 @@ variable "mq_node_hostname_prefix" {
   default = "mq-node"
 }
 
+variable "create_queue_manager" {
+  default = "true"
+}
+
+variable "queue_manager_prefix" {
+  default = "MQ"
+}
+
 variable "vm_compute_shape" {
   description = "Compute Shape"
   default     = "VM.Standard2.2" //2 cores
@@ -122,10 +130,6 @@ variable "bastion_subnet_id" {
 variable "storage_subnet_id" {
   default = ""
 }
-
-############################
-#  Network Configuration   #
-############################
 
 variable "storage_tier_1_disk_count" {
   default = "4"

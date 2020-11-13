@@ -41,43 +41,45 @@ function create_queue_manager {
   HOSTNAME=`hostname`
   PREFIX_PAIRNUM=${HOSTNAME%-*}
   PAIRNUM=${PREFIX_PAIRNUM##*-}
-  MQ_DIR=${CLIENT_MOUNT_DIR}/MQHA-${PAIRNUM}
+  export QUEUE_MANAGER_NAME=${QUEUE_MANAGER_PREFIX}_${PAIRNUM}
+  export MQ_DIR=${CLIENT_MOUNT_DIR}/${QUEUE_MANAGER_NAME}
 
   if [[ `hostname` == *0 ]]; then
+
+    ## If the default directory name already exists for whatever reason, keep 
+    ## trying to make a new directory based on the current time stamp.
     while [ -d ${MQ_DIR} ]; do
       MQ_DIR=${CLIENT_MOUNT_DIR}/`date +"%h-%d-%Y-%H:%M:%S"`
       sleep 1
     done
     mkdir ${MQ_DIR}
+    mkdir ${MQ_DIR}/logs
+    mkdir ${MQ_DIR}/qmgrs
     ln -s ${MQ_DIR} /MQHA
-    if [ ! -d /MQHA/logs ]; then
-      mkdir /MQHA/logs
-    fi
-    if [ ! -d /MQHA/qmgrs ]; then
-      mkdir /MQHA/qmgrs
-    fi
     chown -R mqm:mqm /MQHA/
     chmod -R ug+rwx /MQHA/
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; crtmqm -ld /MQHA/logs -md /MQHA/qmgrs QM1'
-    touch ${MQ_DIR}/qm.created.0
+    
+    ## Create the queue manager on the nodes
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; crtmqm -ld /MQHA/logs -md /MQHA/qmgrs ${QUEUE_MANAGER_NAME} ; dspmqinf -o command ${QUEUE_MANAGER_NAME} > ${MQ_DIR}/qm.created.0'
     while [ ! -e ${MQ_DIR}/qm.created.1 ]; do
        sleep 10
     done
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x ${QUEUE_MANAGER_NAME}'
     touch ${MQ_DIR}/qm.started.0
   elif [[ `hostname` == *1 ]]; then
     while [ ! -e ${MQ_DIR}/qm.created.0 ]; do
        sleep 10
     done
     ln -s ${MQ_DIR} /MQHA
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; addmqinf -s QueueManager -v Name=QM1 -v Directory=QM1 -v Prefix=/var/mqm -v DataPath=/MQHA/qmgrs/QM1' 
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; . ${MQ_DIR}/qm.created.0'
     touch ${MQ_DIR}/qm.created.1
     while [ ! -e ${MQ_DIR}/qm.started.0 ]; do
        sleep 10
     done
-    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x QM1'
+    sudo -E -u mqm bash -c '. /opt/mqm/bin/setmqenv -s ; strmqm -x ${QUEUE_MANAGER_NAME}'
   fi
 
+  ## Some cleanup once the second node in complete.
   if [[ `hostname` == *1 ]]; then
     rm -f  ${MQ_DIR}/qm.created.* ${MQ_DIR}/qm.started.0
   fi
@@ -90,4 +92,6 @@ systemctl disable firewalld
 
 mount_nfs_server
 install_ibmmq
-create_queue_manager
+if [ "$CREATE_QUEUE_MANAGER" = true ]; then
+  create_queue_manager
+fi

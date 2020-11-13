@@ -32,7 +32,7 @@ groupings:
     variables:
     - num_mq_pairs 
     - vm_compute_shape
-    - mq_node_hostname_prefix 
+    - mq_node_hostname_prefix
     - storage_tier_1_disk_count
     - storage_tier_1_disk_size
     - ad_name
@@ -45,6 +45,11 @@ groupings:
     - bastion_subnet_id
     - storage_subnet_id
     - rm_only_ha_vip_private_ip
+  - title: "Queue Manager Configuration"
+    visible: true
+    variables:
+    - create_queue_manager
+    - queue_manager_prefix 
 variables:
 
   ad_name:
@@ -124,9 +129,23 @@ variables:
     type: string
     required: true
     default: "mq-node"
-    description: "MQ node hostname prefix "
-    visible: true
-  
+    description: "MQ node hostname prefix."
+
+  create_queue_manager:
+    type: boolean
+    title: "Create a queue manage at deployment."
+    description: "If left unchecked a queue maneger will need to be created manually."
+    required: true
+    default: true
+
+  queue_manager_prefix:
+    title: "queue manager prefix. (No dashes)"
+    type: string 
+    required: true
+    default: "QM"
+    description: "Queue manager name prefix."
+    visible: ${create_queue_manager} 
+ 
   ssh_public_key:
     title: "SSH Public Key"
     description: "Public key for all worker instances."

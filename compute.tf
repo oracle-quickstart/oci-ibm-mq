@@ -28,6 +28,8 @@ resource "oci_core_instance" "node" {
           "#!/usr/bin/env bash",
           "MQ_URL=\"${var.mq_url}\"",
           "NFS_SERVER_IP=\"${var.rm_only_ha_vip_private_ip}\"",
+          "CREATE_QUEUE_MANAGER=\"${var.create_queue_manager}\"",
+          "QUEUE_MANAGER_PREFIX=\"${var.queue_manager_prefix}\"",
           file("./scripts/configure.sh"),
         ],
       )

@@ -23,7 +23,7 @@ mkdir ./tmp_package/scripts
 cp -rv ../scripts/configure.sh ./tmp_package/scripts
 
 echo "Removing provider.tf...."
-rm ./tmp_package/provider.tf
+rm -f ./tmp_package/provider.tf
  
 echo "Adding $schema..."
 cp $schema ./tmp_package
