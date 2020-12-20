@@ -9,6 +9,8 @@ locals {
   # Logic to use AD name provided by user input on ORM or to lookup for the AD name when running from CLI
   ad = (var.ad_name != "" ? var.ad_name : data.oci_identity_availability_domain.ad.name)
 
+  # Set the MQ_URL environment variable if we're attempting to install 9.2.0 (9.1.5 is baked into the image).
+  mq_url = var.mq_version == "9.2.0" ? "https://objectstorage.us-ashburn-1.oraclecloud.com/p/v-KDQLjLOrMF9IbOZ1XXXK_c5ZdTxWQ0hEdw1V1ihtF6-UKvEg74gQJ_bPh_e4pW/n/partners/b/IBM/o/IBM_MQ_9.2.0_LINUX_X86-64_TRIAL.tar.gz" : ""
 
   # Logic to choose a custom image or a marketplace image.
   compute_image_id = var.mp_subscription_enabled ? var.mp_listing_resource_id : var.custom_image_id

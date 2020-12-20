@@ -30,6 +30,7 @@ groupings:
   - title: "MQ Configuration"
     visible: true
     variables:
+    - mq_version
     - num_mq_pairs 
     - vm_compute_shape
     - mq_node_hostname_prefix
@@ -115,6 +116,16 @@ variables:
     dependsOn:
       compartmentId: ${compartment_ocid}
       imageId: ${mp_listing_resource_id}
+
+  mq_version:
+    visible: true
+    type: enum
+    title: "IBM MQ version"
+    enum:
+      - "9.2.0"
+      - "9.1.5"
+    required: true
+    default: "9.2.0"
 
   num_mq_pairs:
     title: "Number of MQ pairs"

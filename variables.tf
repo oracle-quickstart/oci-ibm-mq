@@ -25,6 +25,10 @@ variable "mq_url" {
   default     = ""
 }
 
+variable "mq_version" {
+  default     = "9.2.0"
+}
+
 ############################
 #  Hidden Variable Group   #
 ############################
