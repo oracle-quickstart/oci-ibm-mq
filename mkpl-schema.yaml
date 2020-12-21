@@ -130,7 +130,7 @@ variables:
   num_mq_pairs:
     title: "Number of MQ pairs"
     type: integer
-    description: "The number is mq node pairs to be spun up."
+    description: "Each MQ node pair requires two compute instance."
     default: 1
     minimum: 1
     maximum: 100
