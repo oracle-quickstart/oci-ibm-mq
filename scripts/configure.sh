@@ -7,6 +7,7 @@ function mount_nfs_server {
   yum -y install nfs-utils
   mkdir -p ${CLIENT_MOUNT_DIR}
   mount -t nfs -o vers=4,defaults,noatime,bg,timeo=100,ac,actimeo=120,nocto,rsize=1048576,wsize=1048576,nolock,local_lock=none,proto=tcp,sec=sys,_netdev ${NFS_SERVER_IP}:${SERVER_MOUNT_DIR} ${CLIENT_MOUNT_DIR}
+  echo ${NFS_SERVER_IP}:${SERVER_MOUNT_DIR}  ${CLIENT_MOUNT_DIR} nfs vers=4,defaults,noatime,bg,timeo=100,ac,actimeo=120,nocto,rsize=1048576,wsize=1048576,nolock,local_lock=none,proto=tcp,sec=sys,_netdev >> /etc/fstab
 
   ## Do not exit the mount function until the mount is complete
   mountpoint ${CLIENT_MOUNT_DIR}
